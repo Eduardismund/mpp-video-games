@@ -1,0 +1,405 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root{
+  --header-height: 150px;
+}
+
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+#root {
+  display: flex;
+  flex-flow: row wrap;
+  align-content: stretch;
+}
+
+.header {
+  display: block;
+  background-color: #222250;
+  min-height: var(--header-height);
+  width: 100vw;
+}
+
+
+.scene {
+  background-color: #ffffff;
+  padding: 10px;
+  box-sizing: border-box;
+  min-height: calc(100vh - var(--header-height));
+  min-width: calc(100vw * 8 / 10);
+  flex: 7;
+}
+
+
+.side-panel {
+  flex: 3;
+  width: calc(100vw * 2 / 10);
+  min-height: calc(100vh - var(--header-height));
+
+  background-color: #bb1065;
+}
+
+ul.nav-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 40em;
+}
+
+ul.nav-menu > li {
+  padding: 10px;
+}
+
+ul.nav-menu > li {
+  padding: 10px;
+  display: flex;
+  flex-flow: row nowrap;
+}
+ul.nav-menu > li > .icon {
+  max-width: 100px;
+  flex: 1;
+}
+
+
+ul.nav-menu > li > .content {
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1;
+}
+
+ul.nav-menu > li > .content > * {
+  padding: 2px 0;
+}
+
+ul.nav-menu > li > .content > .title {
+  font-size: 15px;
+  padding-bottom: 5px;
+  font-weight: bold;
+  font-family: Arial, serif;
+}
+
+ul.nav-menu > li > .content > .description {
+  font-size: 10px;
+  font-family: Arial, serif;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.form-group input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: #222250;
+  outline: none;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+}
+
+button {
+  background: #222250;
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #151538;
+}
+
+.result-message {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.result-message.success {
+  color: green;
+}
+
+.result-message.error {
+  color: red;
+}
+/* Center everything */
+.table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 60vh;
+}
+
+/* Table Styling */
+table {
+  width: 90%;
+  max-width: 900px;
+  border-collapse: collapse;
+  background: #f8f9fa;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+  background: #222250;
+  color: white;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tbody tr:hover {
+  background: #eee;
+}
+
+/* Image Styling */
+.game-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Filter Section BELOW the table */
+.filter-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  min-width: calc(100vw * 8 / 10);
+  background: #222250;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Slider Styling */
+input[type="range"] {
+  width: 200px;
+  cursor: pointer;
+  accent-color: #222250;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  table {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .game-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .filter-container {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  input[type="range"] {
+    width: 100%;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(90deg, #ff00ff, #0000ff);
+  color: white;
+  font-family: 'Press Start 2P', cursive;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.title {
+  margin-left: 10px;
+  font-size: 24px;
+}
+
+.nav-menu.simple .icon {
+  color: #ffffff;
+}
+.nav-menu.ext .icon {
+  color: #000000;
+}
+
+.icon {
+  color: white;
+}
+
+.side-panel {
+  width: 250px;
+  height: 100vh;
+  background: #222;
+  padding: 20px;
+  font-family: 'Press Start 2P', cursive;
+  color: white;
+  box-shadow: 4px 0 10px rgba(255, 0, 255, 0.3);
+}
+
+.side-panel ul {
+  list-style: none;
+  padding: 0;
+}
+
+.side-panel li{
+  margin-bottom: 20px;
+  font-size: 10px;
+}
+
+.side-panel a {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  transition: 0.3s;
+}
+
+.side-panel a:hover {
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff;
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+
+/* Delete Confirmation Overlay */
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Confirmation Box */
+.confirmation-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 350px;
+  font-family: 'Press Start 2P', cursive;
+  color: #222250;
+  border: 3px solid #222250;
+}
+
+.confirmation-box.error{
+  background: #ff0044;
+}
+
+.confirmation-box.success{
+  background: #40ff33;
+}
+
+.confirmation-box.info{
+  background: #fffd11;
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+/* Delete Button */
+.delete-button {
+  background: #bb1065;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease-in-out;
+}
+
+.delete-button:hover {
+  background: #ff0044;
+}
+
+/* Cancel Button */
+.cancel-button {
+  background: #ccc;
+  color: black;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease-in-out;
+}
+
+.cancel-button:hover {
+  background: #bbb;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
