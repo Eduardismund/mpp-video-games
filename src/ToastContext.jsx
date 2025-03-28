@@ -13,7 +13,7 @@ export const ToastProvider = ({children}) => {
 
     setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    }, 3000); // Auto-close after 3 seconds
+    }, 3000);
   };
 
   return (

@@ -140,16 +140,6 @@ export function addVideoGame(videoGame) {
     })
 }
 
-
-export function checkVideoGameExistence(videoGameName) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const exists = videoGamesList.some(game => game.name === videoGameName)
-      resolve(exists)
-    }, 1000)
-  })
-}
-
 /**
  *
  * @param videoGame
@@ -164,10 +154,15 @@ export async function updateVideoGame(videoGame) {
   })
 }
 
-export function deleteVideoGame(videoGameName) {
+/**
+ *
+ * @param {string} videoGameId
+ * @returns {Promise<void>}
+ */
+export function deleteVideoGame(videoGameId) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      const index = videoGamesList.findIndex(game => game.name === videoGameName)
+      const index = videoGamesList.findIndex(game => game.id === videoGameId)
       videoGamesList.splice(index, 1)
       resolve();
     }, 1000)

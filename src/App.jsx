@@ -19,18 +19,20 @@ function App() {
         <Header/>
         <SidePanel/>
         <div className={"scene"}>
-          <ToastProvider>
-          <Routes>
-            <Route path="/" element={<HomePage/>}/>
-            <Route path="/home" element={<HomePage/>}/>
-            <Route path="/add-video-game" element={<AddVideoGamePage/>}/>
-            <Route path="/update-video-game" element={<SearchVideoGameForUpdatePage/>}/>
-            <Route path="/update-video-game/:id" element={<UpdateVideoGamePage/>}/>
-            <Route path="/delete-video-game/:id" element={<DeleteVideoGamePage/>}/>
-            <Route path="/delete-video-game" element={<SearchVideoGameForDeletePage/>}/>
-            <Route path="/list-video-games" element={<ListVideoGamesPage/>}/>
-          </Routes>
-          </ToastProvider>
+          <div className="scene-container">
+            <ToastProvider>
+              <Routes>
+                <Route path="/" element={<HomePage/>}/>
+                <Route path="/home" element={<HomePage/>}/>
+                <Route path="/add-video-game" element={<AddVideoGamePage/>}/>
+                <Route path="/update-video-game" element={<SearchVideoGameForUpdatePage/>}/>
+                <Route path="/update-video-game/:id" element={<UpdateVideoGamePage/>}/>
+                <Route path="/delete-video-game/:id" element={<DeleteVideoGamePage/>}/>
+                <Route path="/delete-video-game" element={<SearchVideoGameForDeletePage/>}/>
+                <Route path="/list-video-games" element={<ListVideoGamesPage/>}/>
+              </Routes>
+            </ToastProvider>
+          </div>
         </div>
       </BrowserRouter>
     </>

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {checkVideoGameExistence, getVideoGameByName} from "./VideoGameStore.js";
+import {getVideoGameByName} from "./VideoGameStore.js";
 import {useToast} from "./ToastContext.jsx";
 
 function VideoGameLookup({onGameFound}) {

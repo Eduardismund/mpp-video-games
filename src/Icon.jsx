@@ -29,7 +29,7 @@ function getIcon(key, size) {
 function Icon({iconKey, size}) {
   return (
     <>
-      <div>{getIcon(iconKey, size)}</div>
+      {getIcon(iconKey, size)}
     </>
   )
 }

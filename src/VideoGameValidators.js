@@ -10,7 +10,7 @@
  * @return {Promise<FieldValidationResult>}
  */
 
-import {computeVideoGameId, getVideoGameByName} from "./VideoGameStore.js";
+import {getVideoGameByName} from "./VideoGameStore.js";
 import {getGenreList} from "./GenreStore.js";
 
 /**
@@ -23,23 +23,6 @@ export function getFieldValidator(fieldName) {
     || (() => Promise.resolve({success: true}))
 }
 
-export function getCheckFieldValidator(fieldName) {
-  return checkValidatorByName[fieldName]
-}
-
-/**
- *
- * @param formData
- * @return {Promise<{[string]: FieldValidationResult}>}
- */
-export function getObjectValidator(formData) {
-  return Promise.all(
-    Object.keys(formData).map(key => ({key, validator: getFieldValidator(key)}))
-      .map(({key, validator}) => ({key, resultPromise: validator(formData[key])}))
-      .map(({key, resultPromise}) => resultPromise.then(result => ({key, result})))
-  ).then(keyAndResults => keyAndResults.reduce((prev, curr) => ({...prev, [curr.key]: curr.result}), {}))
-
-}
 
 /**
  * @param {any} fieldValue
@@ -222,12 +205,5 @@ const validatorsByField = {
       required(price),
       isNumber(price)
     ])
-  }
-}
-
-const checkValidatorByName = {
-  name: (name) => {
-    return reduceFieldValidationResults([
-      required(name)])
   }
 }

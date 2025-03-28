@@ -13,8 +13,7 @@ function NavMenuItemSimple({iconKey, title, actionRoute}) {
 
   return (
     <>
-      <Icon iconKey={iconKey} size={20}/>
-      <Link to={actionRoute}>{title}</Link>
+      <Link to={actionRoute}><Icon iconKey={iconKey} size={20}/><span>{title}</span></Link>
     </>
   )
 }
