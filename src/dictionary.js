@@ -1,6 +1,7 @@
 const dictionary = {
   en:
     {
+      appTitle: "Game Library",
       navMenu: {
         "home": {
           shortTitle: "Home",
@@ -36,6 +37,23 @@ const dictionary = {
         genre: {shortName: "Genre", inputName: "Insert the name of the genre"},
         releaseDate: {shortName: "Release Date", inputName: "Insert the release date: (YYYY-MM-DD)"},
         price: {shortName: "Price", inputName: "Insert the price of the game"}
+      },
+      videoGameLookup: {
+        "labelFor": {
+          "update": "Look up the game you want to update",
+          "delete": "Look up the game you want to delete"
+        },
+        "searchInput": {
+          "placeholder": "Enter Video Game Name"
+        },
+        "searchButton": {
+          "label": "Search"
+        },
+        "messages": {
+          "nameRequired": "Please enter a valid name!",
+          "noResult": "No game with that name found!",
+          "unexpectedError": "Error while checking game existence!"
+        }
       }
     }
 }

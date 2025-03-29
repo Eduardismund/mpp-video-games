@@ -13,7 +13,6 @@ function ListVideoGamesPage() {
     async function fetchData () {
       const list = await getVideoGamesList()
       setVideoGameList(list);
-      console.log(list)
     }
     fetchData()
   }, []);

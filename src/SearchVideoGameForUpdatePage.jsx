@@ -13,7 +13,7 @@ export function SearchVideoGameForUpdatePage(){
 
   return (
     <>
-      <VideoGameLookup onGameFound={handleGameCheck}/>
+      <VideoGameLookup mode="update" onGameFound={handleGameCheck}/>
     </>
   )
 }
