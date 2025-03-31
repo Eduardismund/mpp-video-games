@@ -67,7 +67,7 @@ async function videoGameAlreadyExists(videoGameName) {
  */
 async function isValidReleaseDate(releaseDate) {
   const regex = /^[0-9]{4}(-[0-9]{2}){2}$/g
-  if (!releaseDate.length) {
+  if (releaseDate === null || releaseDate === undefined || !releaseDate.length) {
     return {
       success: true
     }
@@ -123,6 +123,9 @@ async function existingGenre(genre) {
  * @returns {Promise<FieldValidationResult>}
  */
 async function isNumber(price) {
+  if (price === null || price === undefined || price === '') {
+    return {success: true}
+  }
   const regex = /^[1-9][0-9]*(\.[0-9]{1,2})?$/;
   if (!regex.test(price) && price.length) {
     return {
@@ -160,18 +163,20 @@ function minLength(fieldValue, minLen) {
  * @param {Promise<FieldValidationResult>[]} resultPromises
  * @return {Promise<FieldValidationResult>}
  */
-function reduceFieldValidationResults(resultPromises) {
-  return Promise.all(resultPromises)
-    .then(results =>
-      results.reduce((previousValue, currentValue) => {
-        if (currentValue.success) {
-          return previousValue
-        }
-        if (previousValue.success) {
-          return currentValue
-        }
-        return {success: false, errors: [...previousValue.errors, ...currentValue.errors]}
-      }))
+async function reduceFieldValidationResults(resultPromises) {
+  let result = {success: true}
+  for (let resultPromise of resultPromises) {
+    const currentValue = await resultPromise
+    if (currentValue.success) {
+      continue
+    }
+    if (result.success) {
+      result = currentValue
+      continue
+    }
+    result = {success: false, errors: [...result.errors, ...currentValue.errors]}
+  }
+  return result
 }
 
 const validatorsByField = {

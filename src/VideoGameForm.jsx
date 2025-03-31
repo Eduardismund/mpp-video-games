@@ -20,16 +20,15 @@ function VideoGameForm({id, mode}) {
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
   const dictionary = getDictionary("en").videoGameFields
-  const { showToast } = useToast();
-
+  const {showToast, showConfirmation} = useToast();
 
 
   useEffect(() => {
     const fetchData = async () => {
-      setGenreOptions(await  getGenreList())
+      setGenreOptions(await getGenreList())
       if (mode === 'update' || mode === 'delete') {
         const videoGame = await getVideoGameById(id)
-        if(!videoGame){
+        if (!videoGame) {
           showToast("Video game not found!", "error")
           return
         }
@@ -41,8 +40,9 @@ function VideoGameForm({id, mode}) {
         setFormData(newFormData)
       }
     }
-    fetchData();
-  }, [])
+    // noinspection JSIgnoredPromiseFromCall
+    fetchData()
+  }, [id, mode, showToast, setFormData])
 
   const handleChange = async (e) => {
     const {name, value} = e.target
@@ -55,7 +55,7 @@ function VideoGameForm({id, mode}) {
       setErrors({...errors, [name]: vldRes.errors})
     }
 
-  };
+  }
 
   /**
    * @param {object} formDataObj
@@ -85,27 +85,26 @@ function VideoGameForm({id, mode}) {
     return Object.keys(newErrors).length < 1
   }
 
-  async function handleSubmit(e){
+  async function handleSubmit(e) {
     e.preventDefault();
-
-    if (mode === 'delete' || await performFieldValidations() ) {
-      try {
-        if (mode === "create") {
-          const id = await addVideoGame(mapFormDataToVideoGame(formData))
-          showToast("Video Game Added Successfully!", "success")
-          navigate(`/update-video-game/${id}`)
-        } if (mode === "delete") {
-          await deleteVideoGame(`${id}`)
-          showToast("Video Game Deleted Successfully!", "success")
-          navigate(`/list-video-games`)
-        } else {
-          await updateVideoGame(mapFormDataToVideoGame(formData));
-          showToast("Video Game Updated Successfully!", "success")
-        }
-
-      } catch (ex) {
-        showToast("An unexpected error occurred!", "error")
-        console.error(ex)
+    if (mode === 'delete' || await performFieldValidations()) {
+      if (mode === "delete") {
+        showConfirmation({
+          message: 'Are you sure you want to delete this video game?',
+          confirmLabel: 'Yes, Delete',
+          onConfirm: async () => {
+            await deleteVideoGame(`${id}`)
+            showToast("Video Game Deleted Successfully!", "success")
+            navigate(`/list-video-games`)
+          }
+        })
+      } else if (mode === "update") {
+        await updateVideoGame(mapFormDataToVideoGame(formData));
+        showToast("Video Game Updated Successfully!", "success")
+      } else {
+        const id = await addVideoGame(mapFormDataToVideoGame(formData))
+        showToast("Video Game Added Successfully!", "success")
+        navigate(`/update-video-game/${id}`)
       }
     }
   }
@@ -126,7 +125,7 @@ function VideoGameForm({id, mode}) {
     <>
       <form onSubmit={handleSubmit} className="form-container">
 
-        <div className="form-group">
+        <div className="form-group name">
           <label>{mode === 'delete' ? dictionary.name.shortName : dictionary.name.inputName}</label>
           <input name="name"
                  value={formData.name}
@@ -135,14 +134,14 @@ function VideoGameForm({id, mode}) {
                  readOnly={mode === "update"}
                  disabled={mode === 'delete'}
           />
-          {errors.name && <span style={{color: "red"}}>{errors.name}</span>}
+          {errors.name && <span className="error">{errors.name}</span>}
 
         </div>
-        <div className="form-group">
+        <div className="form-group genre">
           <label>{mode === 'delete' ? dictionary.genre.shortName : dictionary.genre.inputName}</label>
           <select name="genre"
-                 value={formData.genre}
-                 onChange={handleChange}
+                  value={formData.genre}
+                  onChange={handleChange}
                   placeholder={dictionary.genre.shortName}
                   disabled={mode === 'delete'}>
             <option></option>
@@ -152,27 +151,27 @@ function VideoGameForm({id, mode}) {
               </option>
             ))}
           </select>
-          {errors.genre && <span style={{color: "red"}}>{errors.genre}</span>}
+          {errors.genre && <span className="error">{errors.genre}</span>}
 
         </div>
-        <div className="form-group">
+        <div className="form-group releaseDate">
           <label>{mode === 'delete' ? dictionary.releaseDate.shortName : dictionary.releaseDate.inputName}</label>
           <input name="releaseDate"
                  value={formData.releaseDate}
                  onChange={handleChange}
                  placeholder={dictionary.releaseDate.shortName}
                  disabled={mode === 'delete'}/>
-          {errors.releaseDate && <span style={{color: "red"}}>{errors.releaseDate}</span>}
+          {errors.releaseDate && <span className="error">{errors.releaseDate}</span>}
 
         </div>
-        <div className="form-group">
+        <div className="form-group price">
           <label>{mode === 'delete' ? dictionary.price.shortName : dictionary.price.inputName}</label>
           <input name="price"
                  value={formData.price}
                  onChange={handleChange}
                  placeholder={dictionary.price.shortName}
                  disabled={mode === 'delete'}/>
-          {errors.price && <span style={{color: "red"}}>{errors.price}</span>}
+          {errors.price && <span className="error">{errors.price}</span>}
 
         </div>
         <button type="submit" disabled={Object.keys(errors).length > 0}>{submitButtonLabel()}</button>

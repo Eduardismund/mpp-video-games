@@ -1,0 +1,71 @@
+[
+  {
+    "name": "Dead by Daylight",
+    "genre": "Horror",
+    "releaseDate": "2016-06-14",
+    "price": 29.99,
+    "image": "https://upload.wikimedia.org/wikipedia/en/1/1b/Dead_by_Daylight_logo.jpg"
+  },
+  {
+    "name": "CSGO",
+    "genre": "First-Person Shooter",
+    "releaseDate": "2012-08-21",
+    "price": 14.99,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Counter-Strike_Global_Offensive_logo.svg/1200px-Counter-Strike_Global_Offensive_logo.svg.png"
+  },
+  {
+    "name": "Witch It",
+    "genre": "Survival / Multiplayer",
+    "releaseDate": "2017-07-20",
+    "price": 19.99,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Witch_It_Logo.png/1200px-Witch_It_Logo.png"
+  },
+  {
+    "name": "Apex Legends",
+    "genre": "Battle Royale",
+    "releaseDate": "2019-02-04",
+    "price": 0.00,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/3/39/Apex_Legends_logo.png"
+  },
+  {
+    "name": "The Witcher 3: Wild Hunt",
+    "genre": "Action RPG",
+    "releaseDate": "2015-05-19",
+    "price": 39.99,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/a/a7/The_Witcher_3_Wild_Hunt_logo.jpg"
+  },
+  {
+    "name": "Minecraft",
+    "genre": "Sandbox",
+    "releaseDate": "2011-11-18",
+    "price": 26.95,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/5/51/Minecraft_logo.png"
+  },
+  {
+    "name": "Cyberpunk 2077",
+    "genre": "RPG",
+    "releaseDate": "2020-12-10",
+    "price": 59.99,
+    "image": "https://upload.wikimedia.org/wikipedia/en/9/9f/Cyberpunk_2077_box_art.jpg"
+  },
+  {
+    "name": "Overwatch",
+    "genre": "First-Person Shooter",
+    "releaseDate": "2016-05-24",
+    "price": 39.99,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Overwatch_logo_2019.svg"
+  },
+  {
+    "name": "Red Dead Redemption 2",
+    "genre": "Action-Adventure",
+    "releaseDate": "2018-10-26",
+    "price": 59.99,
+    "image": "https://upload.wikimedia.org/wikipedia/en/d/d4/Red_Dead_Redemption_2_cover_art.jpg"
+  },
+  { "name": "Fortnite",
+    "genre": "Battle Royale",
+    "releaseDate": "2017-09-26",
+    "price": 0.00,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Fortnite_Logo.png"
+  }
+]
