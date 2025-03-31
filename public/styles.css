@@ -13,7 +13,7 @@
   --side-panel-width: 280px;
 }
 
-@media screen and (max-width: 1200px){
+@media screen and (max-width: 1200px) {
   :root {
     --header-height: 130px;
     --side-panel-width: 240px;
@@ -195,6 +195,10 @@ ul.nav-menu > li > .content {
   width: 100%;
 }
 
+.form-container .form-group .error {
+  color: red;
+}
+
 
 .form-container .form-group label {
   font-weight: bold;
@@ -285,12 +289,14 @@ ul.nav-menu > li > .content {
 .table-container a:hover {
   color: #666;
 }
+
 .table-container a:hover svg {
   transition: 1s;
 
 }
+
 .table-container a:hover svg {
-  filter: drop-shadow(0 -2px 5px  #ff00ff);
+  filter: drop-shadow(0 -2px 5px #ff00ff);
 }
 
 /* Filter Section BELOW the table */
@@ -382,14 +388,14 @@ input[type="range"] {
 }
 
 /* Button Group */
-.button-group {
+.confirmation-box .button-group {
   display: flex;
   justify-content: space-around;
   margin-top: 15px;
 }
 
-/* Delete Button */
-.delete-button {
+/* Confirm Button */
+.confirmation-box .confirm-button {
   background: #bb1065;
   color: white;
   padding: 10px 15px;
@@ -400,12 +406,12 @@ input[type="range"] {
   transition: background 0.3s ease-in-out;
 }
 
-.delete-button:hover {
+.confirmation-box .confirm-button:hover {
   background: #ff0044;
 }
 
 /* Cancel Button */
-.cancel-button {
+.confirmation-box .cancel-button {
   background: #ccc;
   color: black;
   padding: 10px 15px;
@@ -416,7 +422,7 @@ input[type="range"] {
   transition: background 0.3s ease-in-out;
 }
 
-.cancel-button:hover {
+.confirmation-box .cancel-button:hover {
   background: #bbb;
 }
 

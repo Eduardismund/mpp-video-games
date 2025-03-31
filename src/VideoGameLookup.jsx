@@ -1,11 +1,19 @@
 import {useState} from "react";
 import {getVideoGameByName} from "./VideoGameStore.js";
 import {useToast} from "./ToastContext.jsx";
+import {getDictionary} from "./dictionary.js";
 
-function VideoGameLookup({onGameFound}) {
-  const [gameName, setGameName] = useState("");
-  const {showToast} = useToast();
-
+/**
+ *
+ * @param {'update' | 'delete'} mode
+ * @param onGameFound
+ * @returns {JSX.Element}
+ * @constructor
+ */
+function VideoGameLookup({mode, onGameFound}) {
+  const dict = getDictionary('en')
+  const [gameName, setGameName] = useState("")
+  const {showToast} = useToast()
 
   const handleChange = (e) => {
     setGameName(e.target.value);
@@ -14,22 +22,18 @@ function VideoGameLookup({onGameFound}) {
   const handleCheckGame = async (e) => {
     e.preventDefault();
     if (!gameName.trim()) {
-      showToast("Please enter a valid name!", "info")
+      showToast(dict.videoGameLookup.messages.nameRequired, "info")
       return;
     }
-
     try {
       const game = await getVideoGameByName(gameName);
-      if (!!game) {
+      if (game) {
         onGameFound(game);
         return
       }
-      showToast("No game with that name found!", "info")
-
-
+      showToast(dict.videoGameLookup.messages.noResult, "info")
     } catch (ex) {
-      showToast("Error while checking game existence!", "error")
-
+      showToast(dict.videoGameLookup.messages.unexpectedError, "error")
       console.error(ex)
     }
 
@@ -38,17 +42,17 @@ function VideoGameLookup({onGameFound}) {
   return (
     <form className="form-container" onSubmit={handleCheckGame}>
       <div className="form-group">
-        <label>Look up the game you want</label>
+        <label>{dict.videoGameLookup.labelFor[mode]}</label>
         <input
           type="text"
           name="gameName"
           value={gameName}
           onChange={handleChange}
-          placeholder="Enter Video Game Name"
+          placeholder={dict.videoGameLookup.searchInput.placeholder}
         />
       </div>
 
-      <button type="submit">Search</button>
+      <button type="submit">{dict.videoGameLookup.searchButton.label}</button>
 
 
     </form>

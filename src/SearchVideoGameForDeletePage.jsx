@@ -14,7 +14,7 @@ export function SearchVideoGameForDeletePage(){
 
   return (
     <>
-      <VideoGameLookup onGameFound={handleGameCheck}/>
+      <VideoGameLookup mode="delete" onGameFound={handleGameCheck}/>
     </>
   )
 }
