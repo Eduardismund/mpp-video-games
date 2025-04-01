@@ -5,10 +5,11 @@ import {
   deleteVideoGame,
   getVideoGameByName,
   getVideoGamesList,
+  getVideoGameStatistics,
   updateVideoGame
 } from "../VideoGameStore.js";
 import expectedVideoGames from "../video-games.json"
-import {generateRandomVideoGame} from "./utils.js"
+import {generateRandomVideoGame} from "./test-utils.js"
 
 describe('VideoGameStore', () => {
 
@@ -43,7 +44,6 @@ describe('VideoGameStore', () => {
     const distinctNameIds = new Set(nameIds)
     expect(distinctNameIds).length(1)
   })
-
 
   test("add video game", async () => {
     const initialVideoGames = await getVideoGamesList({})
@@ -80,7 +80,6 @@ describe('VideoGameStore', () => {
     } = videoGamesAfterUpdate.find(videoGame => videoGame.id === videoGameNewState.id);
     expect({id, name, genre, releaseDate, price}).toEqual({...videoGameNewState, name: videoGamesBeforeUpdate[0].name})
   })
-
 
   test("update video game id not found", async () => {
     const initialVideoGames = await getVideoGamesList({})
@@ -122,11 +121,36 @@ describe('VideoGameStore', () => {
     expect(videoGamesAfterDelete.length + 1).toEqual(videoGames.length)
   })
 
-
   test("get video game by name", async () => {
     const videoGameName = "CSGO"
 
     const videoGame = await getVideoGameByName(videoGameName)
     expect(videoGame.name).toEqual(videoGameName)
+  })
+
+  test('get statistics price metrics', async () => {
+    const {priceMetrics} = await getVideoGameStatistics({
+      priceMetrics: {
+        min: true,
+        max: true,
+        percentiles: [10, 40, 60, 90]
+      }
+    })
+    expect(priceMetrics?.min).toBeGreaterThanOrEqual(0)
+    expect(priceMetrics?.max).toBeGreaterThanOrEqual(0)
+    expect(priceMetrics?.percentiles?.length).toBe(4)
+    expect(priceMetrics?.percentiles?.map(({p}) => p)).toEqual([10, 40, 60, 90])
+    priceMetrics?.percentiles?.map(({v}) => v).forEach(v => expect(v).toBeGreaterThanOrEqual(0))
+  })
+  test('get statistics no request', async () => {
+    expect(await getVideoGameStatistics({})).toEqual({})
+    expect(await getVideoGameStatistics({priceMetrics: {}})).toEqual({priceMetrics: {}})
+    expect(await getVideoGameStatistics({
+      priceMetrics: {
+        min: false,
+        max: false,
+        percentiles: []
+      }
+    })).toEqual({priceMetrics: {percentiles: []}})
   })
 })

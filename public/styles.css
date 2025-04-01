@@ -345,6 +345,18 @@ input[type="range"] {
   }
 }
 
+.table-container tbody tr.p10 td:nth-child(5) {
+  background: #008800;
+}
+
+.table-container tbody tr.median td:nth-child(5) {
+  background: #1aaac8;
+}
+
+.table-container tbody tr.p90 td:nth-child(5) {
+  background: #cc0000;
+}
+
 /* endregion tables */
 
 /* Delete Confirmation Overlay */

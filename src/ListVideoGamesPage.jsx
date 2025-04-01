@@ -7,6 +7,7 @@ import {Link} from "react-router-dom";
 
 function ListVideoGamesPage() {
   const [videoGameList, setVideoGameList] = useState([]);
+  const [pricePercentiles, setPricePercentiles] = useState({});
   const [selectedMaxPrice, setSelectedMaxPrice] = useState(0);
   const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState(0);
   const [absoluteMinPrice, setAbsoluteMinPrice] = useState(0);
@@ -14,11 +15,16 @@ function ListVideoGamesPage() {
 
   useEffect(() => {
     async function fetchData() {
-      const {minPrice, maxPrice} = await getVideoGameStatistics(['minPrice', 'maxPrice'])
-      setAbsoluteMaxPrice(maxPrice)
-      setAbsoluteMinPrice(minPrice)
-      setSelectedMaxPrice(maxPrice)
-      setVideoGameList(await getVideoGamesList({minPrice, maxPrice}));
+      const {priceMetrics} = await getVideoGameStatistics({priceMetrics: {min: true, max: true, percentiles: [10, 40, 60, 90]}})
+      setAbsoluteMaxPrice(Math.ceil(priceMetrics.max))
+      setAbsoluteMinPrice(Math.floor(priceMetrics.min))
+      setSelectedMaxPrice(Math.ceil(priceMetrics.max))
+      setPricePercentiles({p10: priceMetrics.percentiles.find(percentile => percentile.p === 10).v,
+        p40: priceMetrics.percentiles.find(percentile => percentile.p === 40).v,
+        p60: priceMetrics.percentiles.find(percentile => percentile.p === 60).v,
+        p90: priceMetrics.percentiles.find(percentile => percentile.p === 90).v,
+      })
+      setVideoGameList(await getVideoGamesList({minPrice:priceMetrics.min, maxPrice:priceMetrics.max}));
       setLoaded(true)
     }
 
@@ -34,6 +40,19 @@ function ListVideoGamesPage() {
     setVideoGameList(await getVideoGamesList({maxPrice}));
   }
 
+  function getVideoGameRowClass(game){
+    if(game.price <= pricePercentiles.p10){
+      return "p10"
+    }
+    if(game.price >= pricePercentiles.p90){
+      return "p90"
+    }
+    if(game.price >= pricePercentiles.p40 && game.price <= pricePercentiles.p60){
+      return "median"
+    }
+    return ""
+
+  }
 
   return (
     !loaded
@@ -58,7 +77,7 @@ function ListVideoGamesPage() {
             </tr>
           ) : (
             videoGameList.map((game, index) => (
-              <tr key={index}>
+              <tr className={getVideoGameRowClass(game)} key={index}>
                 <td>
                   <img src="/images/coming-soon.jpeg" alt={game.name} className="game-image"/>
                 </td>
