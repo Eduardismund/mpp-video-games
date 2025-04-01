@@ -9,6 +9,7 @@
 
 import * as CRC32 from "crc-32";
 import videoGamesJson from "./video-games.json"
+import {computePercentile} from "./utils.js";
 
 /**
  *
@@ -43,19 +44,64 @@ export function getVideoGamesList({minPrice, maxPrice}) {
 }
 
 /**
- * @param {('minPrice' | 'maxPrice')[]} requiredStatistics
- * @returns {Promise<{maxPrice?: number, minPrince?: number}>}
+ * @typedef {Object} Metrics
+ * @property {number} min
+ * @property {number} max
+ * @property {number} median
+ * @property {{p:number, v: number}[]} percentiles
+ */
+
+/**
+ * @typedef {Object} StatisticsRqPriceMetrice
+ * @property {boolean} [min]
+ * @property {boolean} [max]
+ * @property {number[]} [percentiles]
+ */
+
+/**
+ * @typedef {Object} StatisticsRq
+ * @property {StatisticsRqPriceMetrice} [priceMetrics]
+ */
+
+
+/**
+ * @param {StatisticsRqPriceMetrice} request
+ */
+function computePriceMetrics(request) {
+  /**
+   *
+   * @type {Metrics}
+   */
+  const result = {}
+
+  const sortedPrices = videoGamesList.map(vg => vg.price).sort()
+  for (let price of sortedPrices) {
+    if (request.min) {
+      result.min = result.min === undefined ? price : Math.min(result.min, price)
+    }
+    if (request.max) {
+      result.max = result.max === undefined ? price : Math.max(result.max, price)
+    }
+    if (request.percentiles) {
+      result.percentiles = request.percentiles.map(p => ({p, v: computePercentile(sortedPrices, p)}))
+    }
+
+  }
+  return result
+}
+
+/**
+ * @param {StatisticsRq} requiredStatistics
+ * @returns {Promise<{priceMetrics?: Metrics}>}
  */
 export function getVideoGameStatistics(requiredStatistics) {
 
   return new Promise((resolve) => {
     setTimeout(() => {
       const result = {}
-      const handlers = {
-        minPrice: (item) => result.minPrice = result.minPrice === undefined ? item.price : Math.min(result.minPrice, item.price),
-        maxPrice: (item) => result.maxPrice = result.maxPrice === undefined ? item.price : Math.max(result.maxPrice, item.price),
+      if (requiredStatistics?.priceMetrics) {
+        result.priceMetrics = computePriceMetrics(requiredStatistics.priceMetrics)
       }
-      videoGamesList.forEach(vgItem => requiredStatistics.forEach(statItem => handlers[statItem](vgItem)))
       resolve(result)
     }, 100)
   });
