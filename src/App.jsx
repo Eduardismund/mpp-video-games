@@ -9,6 +9,8 @@ import DeleteVideoGamePage from "./DeleteVideoGamePage.jsx";
 import {SearchVideoGameForUpdatePage} from "./SearchVideoGameForUpdatePage.jsx";
 import {SearchVideoGameForDeletePage} from "./SearchVideoGameForDeletePage.jsx";
 import {ToastProvider} from "./ToastContext.jsx";
+import VideoGameStatisticsChart from "./VideoGameStatisticsChart.jsx";
+import React from "react";
 
 
 function App() {
@@ -30,8 +32,12 @@ function App() {
                 <Route path="/delete-video-game/:id" element={<DeleteVideoGamePage/>}/>
                 <Route path="/delete-video-game" element={<SearchVideoGameForDeletePage/>}/>
                 <Route path="/list-video-games" element={<ListVideoGamesPage/>}/>
+                <Route path="/list-video-games/:page" element={<ListVideoGamesPage/>}/>
               </Routes>
             </ToastProvider>
+          </div>
+          <div className="charts">
+            <VideoGameStatisticsChart/>
           </div>
         </div>
       </BrowserRouter>

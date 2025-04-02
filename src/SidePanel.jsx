@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Home, List, PlusCircle, Edit, Trash2 } from "lucide-react";
 import NavMenu from "./NavMenu.jsx";
 
 function SidePanel() {

@@ -6,7 +6,7 @@ import {
   getVideoGameByName,
   getVideoGamesList,
   getVideoGameStatistics,
-  updateVideoGame
+  updateVideoGame,
 } from "../VideoGameStore.js";
 import expectedVideoGames from "../video-games.json"
 import {generateRandomVideoGame} from "./test-utils.js"
@@ -121,12 +121,43 @@ describe('VideoGameStore', () => {
     expect(videoGamesAfterDelete.length + 1).toEqual(videoGames.length)
   })
 
+
   test("get video game by name", async () => {
     const videoGameName = "CSGO"
 
     const videoGame = await getVideoGameByName(videoGameName)
     expect(videoGame.name).toEqual(videoGameName)
   })
+
+  test("get video-games with offset", async () => {
+    const allVideoGames = await getVideoGamesList({})
+    const offset = 2
+
+    const actualVideoGames = await getVideoGamesList({ offset })
+
+    expect(actualVideoGames).toEqual(allVideoGames.slice(offset))
+  })
+
+  test("get video-games with maxItems", async () => {
+    const allVideoGames = await getVideoGamesList({})
+    const maxItems = 3
+
+    const actualVideoGames = await getVideoGamesList({ maxItems })
+
+    expect(actualVideoGames.length).toBeLessThanOrEqual(maxItems)
+    expect(actualVideoGames).toEqual(allVideoGames.slice(0, maxItems))
+  })
+
+  test("get video-games with offset and maxItems", async () => {
+    const allVideoGames = await getVideoGamesList({})
+    const offset = 1
+    const maxItems = 3
+
+    const actualVideoGames = await getVideoGamesList({ offset, maxItems })
+
+    expect(actualVideoGames).toEqual(allVideoGames.slice(offset, offset + maxItems))
+  })
+
 
   test('get statistics price metrics', async () => {
     const {priceMetrics} = await getVideoGameStatistics({

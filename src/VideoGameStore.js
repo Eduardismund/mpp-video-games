@@ -19,24 +19,67 @@ const videoGamesList = videoGamesJson.map(videoGame => ({
   ...videoGame,
   id: _computeVideoGameId(videoGame.name)
 }))
+/**
+ *  @callback videoGameSubscriber
+ *  @param {'create'|'delete'|'update'} action
+ *  @param {any} [payload]
+ */
 
 /**
- * @param {number} [minPrice]
- * @param {number} [maxPrice]
+ *
+ * @type {{[key:string]: videoGameSubscriber}}
+ */
+const videoGameSubscribers = []
+
+/**
+ *
+ * @param {string} key
+ * @param {videoGameSubscriber} subscriber
+ */
+export function addSubscribers(key, subscriber) {
+  videoGameSubscribers[key] = subscriber
+}
+
+
+/**
+ *
+ * @param {'create'|'delete'|'update'} action
+ * @param {any} [payload]
+ */
+export function notifySubscribers(action, payload) {
+  setTimeout(() =>{
+    Object.values(videoGameSubscribers).forEach((subscriber) => {
+      subscriber(action, payload);
+    }, 100);
+  })
+}
+
+/**
+ * @param {Object} [params]
+ * @param {number} [params.minPrice]
+ * @param {number} [params.maxPrice]
+ * @param {number} [params.offset]
+ * @param {number} [params.maxItems]
  * @returns {Promise<VideoGame[]>}
  */
-export function getVideoGamesList({minPrice, maxPrice}) {
+export function getVideoGamesList(params) {
   return new Promise((resolve) => {
     setTimeout(() => {
       const filters = []
-      if (minPrice !== undefined) {
-        filters.push((item) => item.price >= minPrice)
+      if (params?.minPrice !== undefined) {
+        filters.push((item) => item.price >= params.minPrice)
       }
-      if (maxPrice !== undefined) {
-        filters.push((item) => item.price <= maxPrice)
+      if (params?.maxPrice !== undefined) {
+        filters.push((item) => item.price <= params.maxPrice)
+      }
+      if (params?.offset !== undefined) {
+        filters.push((item, index) => index >= params.offset)
+      }
+      if (params?.maxItems !== undefined) {
+        filters.push((item, index) => index < (params.offset || 0) + params.maxItems)
       }
       resolve(videoGamesList
-        .filter(item => filters.filter(filter => !filter(item)).length === 0)
+        .filter((item, index) => filters.filter(filter => !filter(item, index)).length === 0)
         .map(item => ({...item}))
       )
     }, 100)
@@ -61,6 +104,17 @@ export function getVideoGamesList({minPrice, maxPrice}) {
 /**
  * @typedef {Object} StatisticsRq
  * @property {StatisticsRqPriceMetrice} [priceMetrics]
+ * @property {number} [genrePopularity]
+ * @property {boolean} [releaseYears]
+ * @property {boolean} [totalCount]
+ */
+
+/**
+ * @typedef {Object} StatisticsRs
+ * @property {Metrics} [priceMetrics]
+ * @property {number} [totalCount]
+ * @property {PopularGenre[]} [genrePopularity]
+ * @property {ReleaseYear[]} [releaseYears]
  */
 
 
@@ -91,8 +145,21 @@ function computePriceMetrics(request) {
 }
 
 /**
+ * @typedef {Object} PopularGenre
+ * @property {string} genre
+ * @property {number} count
+ *//**
+ * @typedef {Object} ReleaseYear
+ * @property {number} year
+ * @property {number} count
+ */
+
+/**
+ *
+ */
+/**
  * @param {StatisticsRq} requiredStatistics
- * @returns {Promise<{priceMetrics?: Metrics}>}
+ * @returns {Promise<StatisticsRs>}
  */
 export function getVideoGameStatistics(requiredStatistics) {
 
@@ -102,9 +169,41 @@ export function getVideoGameStatistics(requiredStatistics) {
       if (requiredStatistics?.priceMetrics) {
         result.priceMetrics = computePriceMetrics(requiredStatistics.priceMetrics)
       }
+      if (requiredStatistics?.totalCount) {
+        result.totalCount = videoGamesList.length
+      }
+
+      if(requiredStatistics?.genrePopularity){
+        result.genrePopularity = computeGenrePopularity(requiredStatistics.genrePopularity)
+      }
+      if(requiredStatistics?.releaseYears){
+        result.releaseYears = computeReleaseYearDistribution()
+      }
       resolve(result)
     }, 100)
   });
+}
+
+function computeGenrePopularity(expectedCount) {
+  const genres = {}
+  videoGamesList.forEach(vg => genres[vg.genre] = genres[vg.genre] ===undefined? 1 : genres[vg.genre] + 1)
+  return Object.keys(genres).map(genre => ({genre, count: genres[genre]}))
+    .sort((a,b) => b.count -a.count)
+    .slice(0, expectedCount)
+
+}
+
+function computeReleaseYearDistribution() {
+  const releaseYears = {};
+
+  videoGamesList.forEach((game) => {
+    const releaseYear = new Date(game.releaseDate).getFullYear();
+    releaseYears[releaseYear] = releaseYears[releaseYear] === undefined ? 1 : releaseYears[releaseYear] + 1;
+  });
+
+  return Object.keys(releaseYears)
+    .map((year) => ({ year: parseInt(year), count: releaseYears[year] }))
+    .sort((a, b) => a.year - b.year); // Sort by year
 }
 
 /**
@@ -137,7 +236,9 @@ export function computeVideoGameId(videoGameName) {
 export function addVideoGame(videoGame) {
   return computeVideoGameId(videoGame.name)
     .then(id => {
-      videoGamesList.push({...videoGame, id})
+      const item = {...videoGame, id};
+      videoGamesList.push(item)
+      notifySubscribers('create', item)
       return id;
     })
 }
@@ -149,11 +250,15 @@ export function addVideoGame(videoGame) {
  */
 export async function updateVideoGame(videoGame) {
   const foundVideoGame = await getVideoGameById(videoGame.id)
-  foundVideoGame && Object.keys(videoGame).forEach(key => {
-    if (videoGame[key] !== '' && key !== 'name') {
-      foundVideoGame[key] = videoGame[key];
-    }
-  })
+  if(foundVideoGame){
+    Object.keys(videoGame).forEach(key => {
+      if (videoGame[key] !== '' && key !== 'name') {
+        foundVideoGame[key] = videoGame[key];
+      }
+    })
+    notifySubscribers('update', foundVideoGame)
+  }
+
 }
 
 /**
@@ -165,7 +270,9 @@ export function deleteVideoGame(videoGameId) {
   return new Promise((resolve) => {
     setTimeout(() => {
       const index = videoGamesList.findIndex(game => game.id === videoGameId)
+      const videoGame = videoGamesList[index]
       videoGamesList.splice(index, 1)
+      notifySubscribers('delete', videoGame)
       resolve();
     }, 100)
   })

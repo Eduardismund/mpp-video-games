@@ -21,15 +21,17 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "chart.js": "^4.4.8",
     "crc-32": "^1.2.2",
     "lucide-react": "^0.484.0",
     "react": "^19.0.0",
+    "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.4.0"
   },
   "devDependencies": {
-    "@testing-library/react": "^16.2.0",
     "@eslint/js": "^9.22.0",
+    "@testing-library/react": "^16.2.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",

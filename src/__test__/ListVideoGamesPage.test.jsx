@@ -11,7 +11,7 @@ vi.mock('../VideoGameStore.js', () => ({
 
 vi.mock('react-router-dom', () => ({
   "Link": ({to, children}) => (<a href={to}>{children}</a>),
-  getVideoGamesList: vi.fn()
+  "useParams": () => ({})
 }))
 
 describe('ListVideoGamePage', () => {
