@@ -42,7 +42,7 @@ function VideoGameForm({id, mode}) {
     }
     // noinspection JSIgnoredPromiseFromCall
     fetchData()
-  }, [id, mode, showToast, setFormData])
+  }, [id, mode, setFormData])
 
   const handleChange = async (e) => {
     const {name, value} = e.target

@@ -1,14 +1,11 @@
-# Video Game Library - Assignment 3/ Assignment 4-Bronze
+# Video Game Library - Assignment 3/ Assignment 4
 
 ## Implemented:
 
-* Full CRUD Operations:
-  * Create: Add new entities.
-  * Read: Display all entities.
-  * Update: Edit existing entities.
-  * Delete: Remove entities.
-* Filter or Sort Functionality:
-  * filter the list of entities based on one max price.
+* Full CRUD Operations
+* Filtering and Pagination
+* Statistics highlighted on the list
+* Three types of charts supporting real time data updates
 
 ## Prerequisites
 
@@ -43,4 +40,20 @@ The `preview` command will launch a web server. Please use the url displayed in 
   ➜  Network: use --host to expose
   ➜  press h + enter to show help
 
+```
+
+# Running the unit tests:
+
+Unit tests are developed using `vitest` framework and use `testing-library/react` to test React components.
+
+In order to run unit tests use the command:
+
+```bash
+npm test
+```
+
+And in order to run the test with coverage, use the command:
+
+```bash
+npm run coverage
 ```

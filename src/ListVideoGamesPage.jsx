@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {getDictionary} from "./dictionary.js";
 import {getVideoGamesList, getVideoGameStatistics} from './VideoGameStore.js'
 import {Edit, Trash} from "lucide-react";
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
+import Pagination from "./Pagination.jsx";
 
 
 function ListVideoGamesPage() {
@@ -11,25 +12,34 @@ function ListVideoGamesPage() {
   const [selectedMaxPrice, setSelectedMaxPrice] = useState(0);
   const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState(0);
   const [absoluteMinPrice, setAbsoluteMinPrice] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const {page} = useParams()
+  const pageNumber = Number(page || 1)
+  const pageSize = 3
+  const offset = (pageNumber-1)* pageSize
 
   useEffect(() => {
     async function fetchData() {
-      const {priceMetrics} = await getVideoGameStatistics({priceMetrics: {min: true, max: true, percentiles: [10, 40, 60, 90]}})
+      const {priceMetrics, totalCount} = await getVideoGameStatistics({
+        priceMetrics: {min: true, max: true, percentiles: [10, 40, 60, 90]},
+        totalCount: true
+      })
       setAbsoluteMaxPrice(Math.ceil(priceMetrics.max))
       setAbsoluteMinPrice(Math.floor(priceMetrics.min))
       setSelectedMaxPrice(Math.ceil(priceMetrics.max))
+      setTotalCount(totalCount)
       setPricePercentiles({p10: priceMetrics.percentiles.find(percentile => percentile.p === 10).v,
         p40: priceMetrics.percentiles.find(percentile => percentile.p === 40).v,
         p60: priceMetrics.percentiles.find(percentile => percentile.p === 60).v,
         p90: priceMetrics.percentiles.find(percentile => percentile.p === 90).v,
       })
-      setVideoGameList(await getVideoGamesList({minPrice:priceMetrics.min, maxPrice:priceMetrics.max}));
+      setVideoGameList(await getVideoGamesList({minPrice:priceMetrics.min, maxPrice:priceMetrics.max, offset: offset, maxItems: pageSize}));
       setLoaded(true)
     }
 
     fetchData()
-  }, []);
+  }, [pageSize, offset]);
 
 
   const dict = getDictionary("en").videoGamesList;
@@ -109,6 +119,9 @@ function ListVideoGamesPage() {
             onChange={onPrinceRangeChange}
           />
         </div>
+      <Pagination baseUri="/list-video-games" currentPage={pageNumber} maxPageButtonsCount={10} pageSize={pageSize} totalCount={totalCount}/>
+
+
       </div>
   );
 

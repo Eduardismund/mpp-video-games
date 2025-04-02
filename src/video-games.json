@@ -67,5 +67,32 @@
     "releaseDate": "2017-09-26",
     "price": 0.00,
     "image": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Fortnite_Logo.png"
+  }, {
+  "name": "Halo Infinite",
+  "genre": "First-Person Shooter",
+  "releaseDate": "2021-12-08",
+  "price": 59.99,
+  "image": "https://upload.wikimedia.org/wikipedia/en/e/e1/Halo_Infinite.png"
+},
+  {
+    "name": "Resident Evil 4 Remake",
+    "genre": "Survival Horror",
+    "releaseDate": "2023-03-24",
+    "price": 59.99,
+    "image": "https://upload.wikimedia.org/wikipedia/en/2/24/Resident_Evil_4_Remake_cover.jpg"
+  },
+  {
+    "name": "GTA V",
+    "genre": "Action-Adventure",
+    "releaseDate": "2013-09-17",
+    "price": 29.99,
+    "image": "https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png"
+  },
+  {
+    "name": "Elden Ring",
+    "genre": "Action RPG",
+    "releaseDate": "2022-02-25",
+    "price": 59.99,
+    "image": "https://upload.wikimedia.org/wikipedia/en/b/b9/Elden_Ring_Box_art.jpg"
   }
 ]
