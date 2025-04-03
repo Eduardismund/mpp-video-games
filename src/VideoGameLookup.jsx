@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {getVideoGameByName} from "./VideoGameStore.js";
+import {getVideoGameByName} from "./RemoteVideoGameStore.js";
 import {useToast} from "./ToastContext.jsx";
 import {getDictionary} from "./dictionary.js";
 

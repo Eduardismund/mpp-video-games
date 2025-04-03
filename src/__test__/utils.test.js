@@ -1,5 +1,5 @@
 import {describe, it, expect} from 'vitest'
-import {computePercentile} from "../utils.js";
+import {computePercentile, extractProperties} from "../utils.js";
 
 describe('computePercentile', () => {
   it("should return the correct percentile value for sorted array", () => {
@@ -29,4 +29,19 @@ describe('computePercentile', () => {
     expect(() => computePercentile(arr, -5)).toThrow("Percentile must be between 0 and 100.");
     expect(() => computePercentile(arr, 105)).toThrow("Percentile must be between 0 and 100.");
   });
+})
+
+describe('extract properties', () => {
+  it("should return empty object if no property match", () => {
+    expect(extractProperties({a: '1', b: 'true', c: 'a'}, {d: "string"})).toEqual({})
+  });
+
+  it("should return converted matching properties", () => {
+    expect(extractProperties({a: '1', b: 'true', c: 'a', e: '1'}, {
+      a: "number",
+      b: "boolean",
+      c: "string",
+      d: "string"
+    })).toEqual({a: 1, b: true, c: 'a'})
+  })
 })

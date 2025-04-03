@@ -16,20 +16,22 @@ describe('VideoGameStore', () => {
   test("get all video games", async () => {
     const actualVideoGames = await getVideoGamesList({})
 
-    expect(await Promise.all(actualVideoGames.map(async videoGame => await computeVideoGameId(videoGame.name))))
-      .toEqual(actualVideoGames.map(videoGame => videoGame.id))
+    expect(await Promise.all(actualVideoGames.items.map(async videoGame => await computeVideoGameId(videoGame.name))))
+      .toEqual(actualVideoGames.items.map(videoGame => videoGame.id))
     expect(
-      actualVideoGames.map(({name, genre, releaseDate, price, image}) => ({
+      actualVideoGames.items.map(({name, genre, releaseDate, price, image}) => ({
         name, genre, releaseDate, price, image
       }))).toEqual(expectedVideoGames)
+
+    expect(actualVideoGames.totalCount).toEqual(expectedVideoGames.length)
   })
 
   test("get video-games with price range", async () => {
     const actualVideoGames = await getVideoGamesList({minPrice: 10, maxPrice: 100})
 
-    expect(await Promise.all(actualVideoGames.map(async videoGame => await computeVideoGameId(videoGame.name))))
-      .toEqual(actualVideoGames.map(videoGame => videoGame.id))
-    expect(actualVideoGames.map(({name, genre, releaseDate, price, image}) => ({
+    expect(await Promise.all(actualVideoGames.items.map(async videoGame => await computeVideoGameId(videoGame.name))))
+      .toEqual(actualVideoGames.items.map(videoGame => videoGame.id))
+    expect(actualVideoGames.items.map(({name, genre, releaseDate, price, image}) => ({
       name, genre, releaseDate, price, image
     }))).toEqual(expectedVideoGames.filter(videoGame => 10 <= videoGame.price && videoGame.price <= 100))
 
@@ -53,11 +55,11 @@ describe('VideoGameStore', () => {
 
     const listAfterAdd = await getVideoGamesList({})
 
-    expect(initialVideoGames.length + 1).toBe(listAfterAdd.length)
+    expect(initialVideoGames.items.length + 1).toBe(listAfterAdd.items.length)
 
     const videoGameId = await computeVideoGameId(newVideoGame.name)
 
-    let foundVideoGame = listAfterAdd.find(videoGame => videoGame.id === videoGameId);
+    let foundVideoGame = listAfterAdd.items.find(videoGame => videoGame.id === videoGameId);
     expect(foundVideoGame).toEqual({...newVideoGame, id: videoGameId})
     expect(foundVideoGame).not.toBe(newVideoGame)
   })
@@ -65,7 +67,7 @@ describe('VideoGameStore', () => {
   test("update video game successful", async () => {
     const videoGameNewState = generateRandomVideoGame();
     const videoGamesBeforeUpdate = await getVideoGamesList({})
-    videoGameNewState.id = videoGamesBeforeUpdate[0].id
+    videoGameNewState.id = videoGamesBeforeUpdate.items[0].id
 
     await updateVideoGame(videoGameNewState)
 
@@ -77,8 +79,8 @@ describe('VideoGameStore', () => {
       genre,
       releaseDate,
       price
-    } = videoGamesAfterUpdate.find(videoGame => videoGame.id === videoGameNewState.id);
-    expect({id, name, genre, releaseDate, price}).toEqual({...videoGameNewState, name: videoGamesBeforeUpdate[0].name})
+    } = videoGamesAfterUpdate.items.find(videoGame => videoGame.id === videoGameNewState.id);
+    expect({id, name, genre, releaseDate, price}).toEqual({...videoGameNewState, name: videoGamesBeforeUpdate.items[0].name})
   })
 
   test("update video game id not found", async () => {
@@ -96,29 +98,29 @@ describe('VideoGameStore', () => {
   test("update video game field is empty", async () => {
     const videoGameNewState = generateRandomVideoGame();
     const videoGames = await getVideoGamesList({})
-    videoGameNewState.id = videoGames[0].id
+    videoGameNewState.id = videoGames.items[0].id
     videoGameNewState.genre = ""
 
     await updateVideoGame(videoGameNewState)
 
     const videoGamesAfterUpdate = await getVideoGamesList({})
 
-    const {genre} = videoGamesAfterUpdate.find(videoGame => videoGame.id === videoGameNewState.id);
+    const {genre} = videoGamesAfterUpdate.items.find(videoGame => videoGame.id === videoGameNewState.id);
     expect(genre).not.toEqual(videoGameNewState.genre)
-    expect(genre).toEqual(videoGames[0].genre)
+    expect(genre).toEqual(videoGames.items[0].genre)
   })
 
   test("delete video game", async () => {
     const videoGames = await getVideoGamesList({})
-    const videoGameIdToDelete = videoGames[0].id
+    const videoGameIdToDelete = videoGames.items[0].id
 
     await deleteVideoGame(videoGameIdToDelete)
 
     const videoGamesAfterDelete = await getVideoGamesList({})
 
-    const videoGameDeleted = videoGamesAfterDelete.find(videoGame => videoGame.id === videoGameIdToDelete);
+    const videoGameDeleted = videoGamesAfterDelete.items.find(videoGame => videoGame.id === videoGameIdToDelete);
     expect(videoGameDeleted).toBe(undefined)
-    expect(videoGamesAfterDelete.length + 1).toEqual(videoGames.length)
+    expect(videoGamesAfterDelete.items.length + 1).toEqual(videoGames.items.length)
   })
 
 
@@ -135,7 +137,7 @@ describe('VideoGameStore', () => {
 
     const actualVideoGames = await getVideoGamesList({ offset })
 
-    expect(actualVideoGames).toEqual(allVideoGames.slice(offset))
+    expect(actualVideoGames.items).toEqual(allVideoGames.items.slice(offset))
   })
 
   test("get video-games with maxItems", async () => {
@@ -144,8 +146,8 @@ describe('VideoGameStore', () => {
 
     const actualVideoGames = await getVideoGamesList({ maxItems })
 
-    expect(actualVideoGames.length).toBeLessThanOrEqual(maxItems)
-    expect(actualVideoGames).toEqual(allVideoGames.slice(0, maxItems))
+    expect(actualVideoGames.items.length).toBeLessThanOrEqual(maxItems)
+    expect(actualVideoGames.items).toEqual(allVideoGames.items.slice(0, maxItems))
   })
 
   test("get video-games with offset and maxItems", async () => {
@@ -155,7 +157,7 @@ describe('VideoGameStore', () => {
 
     const actualVideoGames = await getVideoGamesList({ offset, maxItems })
 
-    expect(actualVideoGames).toEqual(allVideoGames.slice(offset, offset + maxItems))
+    expect(actualVideoGames.items).toEqual(allVideoGames.items.slice(offset, offset + maxItems))
   })
 
 

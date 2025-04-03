@@ -7,11 +7,28 @@
 /**
  * @callback fieldValidator
  * @param {any} fieldValue
+ * @param {string} [mode]
  * @return {Promise<FieldValidationResult>}
  */
 
-import {getVideoGameByName} from "./VideoGameStore.js";
-import {getGenreList} from "./GenreStore.js";
+/**
+ *
+ * @returns {Promise<VideoGame | undefined>}
+ * @private
+ */
+let _getVideoGameByName = async () => undefined
+/**
+ *
+ * @returns {Promise<string[]>}
+ * @private
+ */
+let _getGenreList = async () => []
+
+
+export function initVideoGameValidators({getVideoGameByName, getGenreList}) {
+  _getVideoGameByName = getVideoGameByName
+  _getGenreList = getGenreList
+}
 
 /**
  *
@@ -21,6 +38,24 @@ import {getGenreList} from "./GenreStore.js";
 export function getFieldValidator(fieldName) {
   return validatorsByField[fieldName]
     || (() => Promise.resolve({success: true}))
+}
+
+/**
+ *
+ * @param {{name: string, genre: string, releaseDate:string, price: string}} formData
+ * @param {'create'|'update'} mode
+ * @returns {Promise<{name?: string[], genre?: string[], releaseDate?: string[], price?: string[]}>}
+ */
+export async function validateVideoGame(formData, mode) {
+  const result = {}
+  for (let key of Object.keys(formData)) {
+    const validator = getFieldValidator(key)
+    const fieldResult = await validator(formData[key], mode)
+    if (!fieldResult.success) {
+      result[key] = fieldResult.errors
+    }
+  }
+  return result
 }
 
 
@@ -48,7 +83,7 @@ function required(fieldValue) {
  * @returns {Promise<FieldValidationResult>}
  */
 async function videoGameAlreadyExists(videoGameName) {
-  const videoGame = await getVideoGameByName(videoGameName)
+  const videoGame = await _getVideoGameByName(videoGameName)
   if (videoGame) {
     return {
       success: false,
@@ -105,7 +140,7 @@ async function existingGenre(genre) {
       success: true
     }
   }
-  if (!(await getGenreList()).find(genreName => genreName === genre)) {
+  if (!(await _getGenreList()).find(genreName => genreName === genre)) {
     return {
       success: false,
       errors: [`The genre ${genre} is not a valid option`]
@@ -178,6 +213,7 @@ async function reduceFieldValidationResults(resultPromises) {
   }
   return result
 }
+
 
 const validatorsByField = {
   name: (name, mode) => {

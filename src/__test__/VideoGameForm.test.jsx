@@ -2,7 +2,9 @@ import {beforeEach, describe, expect, test, vi} from 'vitest'
 import {getDictionary} from '../dictionary.js'
 import VideoGameForm from "../VideoGameForm.jsx";
 import {act, fireEvent, render, waitFor} from "@testing-library/react";
-import {addVideoGame, deleteVideoGame, updateVideoGame} from "../VideoGameStore.js";
+import {addVideoGame, deleteVideoGame, getVideoGameByName, updateVideoGame} from "../RemoteVideoGameStore.js";
+import {initVideoGameValidators} from "../VideoGameValidators.js";
+import {getGenreList} from "../GenreStore.js";
 
 const mockNavigate = vi.fn()
 
@@ -15,7 +17,7 @@ vi.mock('../GenreStore.js', () => ({
 }))
 
 
-vi.mock('../VideoGameStore.js', () => ({
+vi.mock('../RemoteVideoGameStore.js', () => ({
   'getVideoGameById': async id => {
     if (id === 'id-1') {
       return {
@@ -46,6 +48,7 @@ vi.mock('../ToastContext.jsx', () => ({
 
 
 describe('VideoGameForm', () => {
+  initVideoGameValidators({getVideoGameByName, getGenreList})
   beforeEach(() => {
     vi.clearAllMocks()
   })

@@ -1,4 +1,4 @@
-import genreList from "./genre.json"
+import genreList from "./genre.json" with { type: "json" };
 /**
  *  @return {Promise<string[]>}
  */
