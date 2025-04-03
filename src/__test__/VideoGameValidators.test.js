@@ -1,16 +1,12 @@
 import {beforeEach, describe, expect, test, vi} from "vitest";
-import {getFieldValidator} from "../VideoGameValidators.js";
-import {getVideoGameByName} from "../VideoGameStore.js";
-import {getGenreList} from "../GenreStore.js";
-
-vi.mock('../VideoGameStore.js', async () => ({
-  getVideoGameByName: vi.fn()
-}))
-vi.mock('../GenreStore.js', async () => ({
-  getGenreList: vi.fn()
-}))
+import {getFieldValidator, initVideoGameValidators} from "../VideoGameValidators.js";
 
 describe('VideoGameValidators', () => {
+  const getVideoGameByName = vi.fn()
+  const getGenreList = vi.fn()
+  initVideoGameValidators({
+    getVideoGameByName, getGenreList
+  })
   beforeEach(async () => vi.clearAllMocks())
   for (let field of ['name', 'genre', 'releaseDate', 'price']) {
     test(`validates ${field} to be required`, async () => {

@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {getDictionary} from "./dictionary.js";
-import {getFieldValidator} from "./VideoGameValidators.js";
-import {addVideoGame, deleteVideoGame, getVideoGameById, updateVideoGame} from "./VideoGameStore.js";
+import {getFieldValidator, validateVideoGame} from "./VideoGameValidators.js";
+import {getVideoGameById, addVideoGame, deleteVideoGame, updateVideoGame} from "./RemoteVideoGameStore.js";
 import {getGenreList} from "./GenreStore.js";
 import {useToast} from "./ToastContext.jsx";
 
@@ -77,12 +77,15 @@ function VideoGameForm({id, mode}) {
   }
 
   async function performFieldValidations() {
-    const results = await Promise.all(Object.keys(formData).map(key => getFieldValidator(key)(formData[key], mode)))
-    const newErrors = Object.keys(formData).map((key, index) => ({key, result: results[index]}))
-      .filter(({result}) => !result.success)
-      .reduce((previous, current) => ({...previous, [current.key]: current.result.errors}), {})
-    setErrors(newErrors)
-    return Object.keys(newErrors).length < 1
+
+    try{
+      const newErrors = await validateVideoGame(formData, mode)
+      setErrors(newErrors)
+      return Object.keys(newErrors).length < 1
+    } catch (ex){
+      console.error(ex)
+    }
+
   }
 
   async function handleSubmit(e) {

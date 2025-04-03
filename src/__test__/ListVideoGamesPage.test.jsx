@@ -1,17 +1,18 @@
 import {describe, expect, test, vi} from 'vitest'
 import ListVideoGamesPage from "../ListVideoGamesPage.jsx";
 import {fireEvent, render, waitFor} from "@testing-library/react";
-import {getVideoGamesList, getVideoGameStatistics} from "../VideoGameStore.js";
+import {getVideoGamesList, getVideoGameStatistics} from "../RemoteVideoGameStore.js";
 import {getDictionary} from "../dictionary.js";
 
-vi.mock('../VideoGameStore.js', () => ({
+vi.mock('../RemoteVideoGameStore.js', () => ({
   getVideoGameStatistics: vi.fn(),
   getVideoGamesList: vi.fn()
 }))
 
 vi.mock('react-router-dom', () => ({
   "Link": ({to, children}) => (<a href={to}>{children}</a>),
-  "useParams": () => ({})
+  "useParams": () => ({}),
+  "useNavigate": () => vi.fn()
 }))
 
 describe('ListVideoGamePage', () => {
@@ -25,7 +26,7 @@ describe('ListVideoGamePage', () => {
         percentiles: [{p: 10, v: 0}, {p: 40, v: 0}, {p: 60, v: 0}, {p: 90, v: 0}]
       }
     }))
-    getVideoGamesList.mockImplementation(() => ([]))
+    getVideoGamesList.mockImplementation(() => ({items: [], totalCount: 0}))
     const {container} = render(<ListVideoGamesPage/>)
     expect(container.innerHTML).toEqual('<p>Loading...</p>')
     await waitFor(() => {
@@ -36,16 +37,19 @@ describe('ListVideoGamePage', () => {
   })
 
   test('displays loading then records', async () => {
-    getVideoGameStatistics.mockImplementation(() => ({ priceMetrics: {
+    getVideoGameStatistics.mockImplementation(() => ({
+      priceMetrics: {
         min: 10,
         max: 102,
         percentiles: [{p: 10, v: 11}, {p: 40, v: 50}, {p: 60, v: 70}, {p: 90, v: 102}]
       }
     }))
-    getVideoGamesList.mockImplementation(() => ([
-      {name: "Name1", genre: "Genre1", releaseDate: "RD1", price: 101.0102},
-      {name: "Name2", genre: "Genre2", releaseDate: "RD2", price: 102.889}
-    ]))
+    getVideoGamesList.mockImplementation(() => ({
+      items: [
+        {name: "Name1", genre: "Genre1", releaseDate: "RD1", price: 101.0102},
+        {name: "Name2", genre: "Genre2", releaseDate: "RD2", price: 102.889}
+      ], totalCount: 2
+    }))
     const {container} = render(<ListVideoGamesPage/>)
     expect(container.innerHTML).toEqual('<p>Loading...</p>')
     await waitFor(() => {
@@ -58,39 +62,45 @@ describe('ListVideoGamePage', () => {
   })
 
   test('filtering by price', async () => {
-    getVideoGameStatistics.mockImplementation(() => ({ priceMetrics: {
+    getVideoGameStatistics.mockImplementation(() => ({
+      priceMetrics: {
         min: 10,
         max: 102,
         percentiles: [{p: 10, v: 10}, {p: 40, v: 50}, {p: 60, v: 70}, {p: 90, v: 102}]
       }
     }))
-    getVideoGamesList.mockImplementation(() => ([
-      {name: "Name1", genre: "Genre1", releaseDate: "RD1", price: 101.0102},
-      {name: "Name2", genre: "Genre2", releaseDate: "RD2", price: 102.889}
-    ]))
+    getVideoGamesList.mockImplementation(() => ({
+      items: [
+        {name: "Name1", genre: "Genre1", releaseDate: "RD1", price: 101.0102},
+        {name: "Name2", genre: "Genre2", releaseDate: "RD2", price: 102.889}
+      ], totalCount: 2
+    }))
     const {container} = render(<ListVideoGamesPage/>)
     await waitFor(() => {
     })
     const table = container.querySelector('table')
     expect(table.querySelectorAll('tbody>tr').length).toBe(2)
     await waitFor(() => fireEvent.change(container.querySelector('input[type=range]'), {target: {value: 100}}))
-    expect(getVideoGamesList).toHaveBeenCalledWith({maxPrice: 100})
+    expect(getVideoGamesList).toHaveBeenCalledWith({maxPrice: 100, offset: 0, maxItems: 3, minPrice: 10})
   })
 
   test('highlights percentiles', async () => {
-    getVideoGameStatistics.mockImplementation(() => ({ priceMetrics: {
+    getVideoGameStatistics.mockImplementation(() => ({
+      priceMetrics: {
         min: 10,
         max: 102,
         percentiles: [{p: 10, v: 10}, {p: 40, v: 50}, {p: 60, v: 70}, {p: 90, v: 102}]
       }
     }))
-    getVideoGamesList.mockImplementation(() => ([
-      {name: "P10", genre: "Genre1", releaseDate: "RD1", price: 9.0102},
-      {name: "P10+", genre: "Genre2", releaseDate: "RD2", price: 31.889},
-      {name: "P50", genre: "Genre1", releaseDate: "RD1", price: 51.0102},
-      {name: "P50+", genre: "Genre2", releaseDate: "RD2", price: 80.889},
-      {name: "P90", genre: "Genre2", releaseDate: "RD2", price: 102.889}
-    ]))
+    getVideoGamesList.mockImplementation(() => ({
+      items: [
+        {name: "P10", genre: "Genre1", releaseDate: "RD1", price: 9.0102},
+        {name: "P10+", genre: "Genre2", releaseDate: "RD2", price: 31.889},
+        {name: "P50", genre: "Genre1", releaseDate: "RD1", price: 51.0102},
+        {name: "P50+", genre: "Genre2", releaseDate: "RD2", price: 80.889},
+        {name: "P90", genre: "Genre2", releaseDate: "RD2", price: 102.889}
+      ], totalCount: 5
+    }))
     const {container} = render(<ListVideoGamesPage/>)
     await waitFor(() => {
     })

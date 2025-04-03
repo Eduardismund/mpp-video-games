@@ -1,11 +1,20 @@
 // noinspection JSCheckFunctionSignatures
 
-import {fireEvent, render, screen} from "@testing-library/react";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {describe, expect, test} from "vitest";
 import App from "../App";
 import {getDictionary} from "../dictionary.js";
 
 const dict = getDictionary('en')
+
+vi.mock('../VideoGameStatisticsChart.jsx', () => ({
+  default: () => <div className="vg-chart"></div>,
+}))
+
+vi.mock('../RemoteVideoGameStore.js', async () => ({
+  getVideoGameStatistics: () => ({priceMetrics: {max: 100, min: 0, percentiles: []}}),
+  getVideoGamesList: () => ({items: [], totalCount: 0}),
+}))
 
 describe('App', async () => {
 
@@ -31,8 +40,14 @@ describe('App', async () => {
 
   test('can navigate to list-video-games', async () => {
     render(<App/>)
+    await waitFor(() => {
+    })
     fireEvent.click(screen.getByText(dict.navMenu['list-video-games'].shortTitle))
     expect(screen.getByText('Loading...')).toBeTruthy()
+    await waitFor(() => {
+    })
+    await waitFor(() => {
+    })
     fireEvent.click(screen.getByText(dict.navMenu.home.shortTitle))
     expectHomePage()
   })
