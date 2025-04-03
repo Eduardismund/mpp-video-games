@@ -7,8 +7,8 @@
  * @property {number} price
  */
 
-import * as CRC32 from "crc-32";
-import videoGamesJson from "./video-games.json"
+import CRC32 from "crc-32";
+import videoGamesJson from "./video-games.json" with { type: "json" };
 import {computePercentile} from "./utils.js";
 
 /**
@@ -29,17 +29,20 @@ const videoGamesList = videoGamesJson.map(videoGame => ({
  *
  * @type {{[key:string]: videoGameSubscriber}}
  */
-const videoGameSubscribers = []
+const videoGameSubscribers = {}
 
 /**
  *
  * @param {string} key
  * @param {videoGameSubscriber} subscriber
  */
-export function addSubscribers(key, subscriber) {
+export function addSubscriber(key, subscriber) {
   videoGameSubscribers[key] = subscriber
 }
 
+export function removeSubscriber(key){
+  delete videoGameSubscribers[key]
+}
 
 /**
  *
@@ -60,28 +63,36 @@ export function notifySubscribers(action, payload) {
  * @param {number} [params.maxPrice]
  * @param {number} [params.offset]
  * @param {number} [params.maxItems]
- * @returns {Promise<VideoGame[]>}
+ * @param {string} [params.nameEq]
+ * @returns {Promise<{items: VideoGame[], totalCount: number}>}
  */
 export function getVideoGamesList(params) {
   return new Promise((resolve) => {
-    setTimeout(() => {
+    setTimeout(async () => {
       const filters = []
+      if (params?.nameEq !== undefined) {
+        const idEq = await computeVideoGameId(params.nameEq)
+        filters.push((item) => item.id === idEq)
+      }
       if (params?.minPrice !== undefined) {
         filters.push((item) => item.price >= params.minPrice)
       }
       if (params?.maxPrice !== undefined) {
         filters.push((item) => item.price <= params.maxPrice)
       }
+      const filteredItems = videoGamesList
+        .filter((item) => filters.filter(filter => !filter(item)).length === 0)
+      const indexFilters = []
       if (params?.offset !== undefined) {
-        filters.push((item, index) => index >= params.offset)
+        indexFilters.push((index) => index >= params.offset)
       }
       if (params?.maxItems !== undefined) {
-        filters.push((item, index) => index < (params.offset || 0) + params.maxItems)
+        indexFilters.push((index) => index < (params.offset || 0) + params.maxItems)
       }
-      resolve(videoGamesList
-        .filter((item, index) => filters.filter(filter => !filter(item, index)).length === 0)
+      const items = filteredItems
+        .filter((_, index) => indexFilters.filter(filter => !filter(index)).length === 0)
         .map(item => ({...item}))
-      )
+      resolve({items, totalCount: filteredItems.length})
     }, 100)
   });
 }

@@ -1,54 +1,67 @@
 import React, {useEffect, useState} from "react";
 import {getDictionary} from "./dictionary.js";
-import {getVideoGamesList, getVideoGameStatistics} from './VideoGameStore.js'
+import {getVideoGameStatistics, getVideoGamesList} from './RemoteVideoGameStore.js'
 import {Edit, Trash} from "lucide-react";
-import {Link, useParams} from "react-router-dom";
+import {Link, useParams, useNavigate} from "react-router-dom";
 import Pagination from "./Pagination.jsx";
 
 
 function ListVideoGamesPage() {
   const [videoGameList, setVideoGameList] = useState([]);
   const [pricePercentiles, setPricePercentiles] = useState({});
-  const [selectedMaxPrice, setSelectedMaxPrice] = useState(0);
+  const [selectedMaxPrice, setSelectedMaxPrice] = useState(-1);
   const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState(0);
   const [absoluteMinPrice, setAbsoluteMinPrice] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const {page} = useParams()
+  const navigate = useNavigate()
   const pageNumber = Number(page || 1)
   const pageSize = 3
-  const offset = (pageNumber-1)* pageSize
+  const offset = (pageNumber-1) * pageSize
 
+  async function onPriceRangeChange(evt) {
+    const maxPrice = Number(evt.target.value)
+    setSelectedMaxPrice(maxPrice)
+  }
   useEffect(() => {
+    let filterMaxPrice = selectedMaxPrice
+    let filterMinPrice = absoluteMinPrice
     async function fetchData() {
-      const {priceMetrics, totalCount} = await getVideoGameStatistics({
-        priceMetrics: {min: true, max: true, percentiles: [10, 40, 60, 90]},
-        totalCount: true
+      if (selectedMaxPrice === -1) {
+        const {priceMetrics} = await getVideoGameStatistics({
+          priceMetrics: {min: true, max: true, percentiles: [10, 40, 60, 90]}
+        })
+        setAbsoluteMaxPrice(filterMaxPrice = Math.ceil(priceMetrics.max))
+        setAbsoluteMinPrice(filterMinPrice = Math.floor(priceMetrics.min))
+        setSelectedMaxPrice(filterMaxPrice)
+        setPricePercentiles({
+          p10: priceMetrics.percentiles.find(percentile => percentile.p === 10)?.v || 0,
+          p40: priceMetrics.percentiles.find(percentile => percentile.p === 40)?.v || 0,
+          p60: priceMetrics.percentiles.find(percentile => percentile.p === 60)?.v || 0,
+          p90: priceMetrics.percentiles.find(percentile => percentile.p === 90)?.v || 0,
+        })
+      }
+      const {items, totalCount} = await getVideoGamesList({
+        minPrice: filterMinPrice,
+        maxPrice: filterMaxPrice,
+        offset: offset,
+        maxItems: pageSize
       })
-      setAbsoluteMaxPrice(Math.ceil(priceMetrics.max))
-      setAbsoluteMinPrice(Math.floor(priceMetrics.min))
-      setSelectedMaxPrice(Math.ceil(priceMetrics.max))
+      setVideoGameList(items)
       setTotalCount(totalCount)
-      setPricePercentiles({p10: priceMetrics.percentiles.find(percentile => percentile.p === 10).v,
-        p40: priceMetrics.percentiles.find(percentile => percentile.p === 40).v,
-        p60: priceMetrics.percentiles.find(percentile => percentile.p === 60).v,
-        p90: priceMetrics.percentiles.find(percentile => percentile.p === 90).v,
-      })
-      setVideoGameList(await getVideoGamesList({minPrice:priceMetrics.min, maxPrice:priceMetrics.max, offset: offset, maxItems: pageSize}));
+      const pageCount = Math.ceil(totalCount / pageSize)
+      if ( pageNumber > pageCount) {
+        navigate('/list-video-games')
+      }
       setLoaded(true)
     }
 
     fetchData()
-  }, [pageSize, offset]);
+  }, [pageSize, offset, selectedMaxPrice]);
 
 
   const dict = getDictionary("en").videoGamesList;
-
-  async function onPrinceRangeChange(evt) {
-    const maxPrice = Number(evt.target.value)
-    setSelectedMaxPrice(maxPrice)
-    setVideoGameList(await getVideoGamesList({maxPrice}));
-  }
 
   function getVideoGameRowClass(game){
     if(game.price <= pricePercentiles.p10){
@@ -94,7 +107,7 @@ function ListVideoGamesPage() {
                 <td>{game.name}</td>
                 <td>{game.genre}</td>
                 <td>{game.releaseDate}</td>
-                <td>${game.price.toFixed(2)}</td>
+                <td>${game.price?.toFixed(2)}</td>
                 <td>
                   <Link to={`/update-video-game/${game.id}`}><Edit size={18}/></Link>
                   <Link to={`/delete-video-game/${game.id}`}><Trash size={18}/></Link>
@@ -116,7 +129,7 @@ function ListVideoGamesPage() {
             max={absoluteMaxPrice}
             step="1"
             value={selectedMaxPrice}
-            onChange={onPrinceRangeChange}
+            onChange={onPriceRangeChange}
           />
         </div>
       <Pagination baseUri="/list-video-games" currentPage={pageNumber} maxPageButtonsCount={10} pageSize={pageSize} totalCount={totalCount}/>
