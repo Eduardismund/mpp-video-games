@@ -2,9 +2,8 @@ import {beforeEach, describe, expect, test, vi} from 'vitest'
 import {getDictionary} from '../dictionary.js'
 import VideoGameForm from "../VideoGameForm.jsx";
 import {act, fireEvent, render, waitFor} from "@testing-library/react";
-import {addVideoGame, deleteVideoGame, getVideoGameByName, updateVideoGame} from "../RemoteVideoGameStore.js";
+import {videoGameStore} from "../WrapperVideoGameStore.js";
 import {initVideoGameValidators} from "../VideoGameValidators.js";
-import {getGenreList} from "../GenreStore.js";
 
 const mockNavigate = vi.fn()
 
@@ -12,29 +11,27 @@ vi.mock('react-router-dom', () => ({
   'useNavigate': () => mockNavigate
 }))
 
-vi.mock('../GenreStore.js', () => ({
-  'getGenreList': async () => ['genre-1', 'genre-2']
-}))
 
-
-vi.mock('../RemoteVideoGameStore.js', () => ({
-  'getVideoGameById': async id => {
-    if (id === 'id-1') {
-      return {
-        id: 'id-1',
-        name: 'name-1',
-        genre: 'genre-1',
-        releaseDate: '2023-12-23',
-        price: 102.121
+vi.mock('../WrapperVideoGameStore.js', () => ({
+  videoGameStore: {
+    'getVideoGameById': async id => {
+      if (id === 'id-1') {
+        return {
+          id: 'id-1',
+          name: 'name-1',
+          genre: 'genre-1',
+          releaseDate: '2023-12-23',
+          price: 102.121
+        }
       }
-    }
-    return undefined
-  },
-  'getVideoGameByName': async () => undefined,
-  'updateVideoGame': vi.fn(),
-  'addVideoGame': vi.fn(),
-  'deleteVideoGame': vi.fn(),
-}))
+      return undefined
+    },
+    'getVideoGameByName': async () => undefined,
+    'updateVideoGame': vi.fn(),
+    'addVideoGame': vi.fn(),
+    'deleteVideoGame': vi.fn(),
+    'getGenreList': async () => ['genre-1', 'genre-2']
+  }}))
 
 const mockShowToast = vi.fn()
 const mockConfirmation = vi.fn()
@@ -48,6 +45,7 @@ vi.mock('../ToastContext.jsx', () => ({
 
 
 describe('VideoGameForm', () => {
+  const {getVideoGameByName, getGenreList, addVideoGame, deleteVideoGame, updateVideoGame} = videoGameStore
   initVideoGameValidators({getVideoGameByName, getGenreList})
   beforeEach(() => {
     vi.resetAllMocks()

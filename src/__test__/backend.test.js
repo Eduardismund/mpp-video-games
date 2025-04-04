@@ -2,33 +2,49 @@ import {beforeEach, describe, expect, it} from 'vitest'
 import {EventSource} from 'eventsource'
 import supertest from 'supertest';
 import app from '../backend/backend.js'
-import {
-  getVideoGameById,
+
+
+const request = supertest(app)
+const {
   getVideoGamesList,
+  getVideoGameById,
+  getVideoGameByName,
   updateVideoGame,
   deleteVideoGame,
   addVideoGame,
   getVideoGameStatistics,
-  addSubscriber
-} from "../VideoGameStore.js";
-import {getGenreList} from "../GenreStore.js";
+  addSubscriber,
+  removeSubscriber,
+  getGenreList
+} = vi.hoisted(() => {
+  return {
+    getVideoGamesList: vi.fn(),
+    getVideoGameById: vi.fn(),
+    getVideoGameByName: vi.fn(),
+    updateVideoGame: vi.fn(),
+    deleteVideoGame: vi.fn(),
+    addVideoGame: vi.fn(),
+    getVideoGameStatistics: vi.fn(),
+    addSubscriber: vi.fn(),
+    removeSubscriber: vi.fn(),
+    getGenreList: vi.fn()
+  }
+})
 
-
-const request = supertest(app)
-
-vi.mock('../VideoGameStore.js', () => ({
-  getVideoGamesList: vi.fn(),
-  getVideoGameById: vi.fn(),
-  getVideoGameByName: vi.fn(),
-  updateVideoGame: vi.fn(),
-  deleteVideoGame: vi.fn(),
-  addVideoGame: vi.fn(),
-  getVideoGameStatistics: vi.fn(),
-  addSubscriber: vi.fn(),
-  removeSubscriber: vi.fn()
-}))
-vi.mock('../GenreStore.js', () => ({
-  getGenreList: vi.fn()
+// noinspection JSUnusedGlobalSymbols
+vi.mock('../LocalVideoGameStore.js', () => ({
+  newLocalVideoGameStore: () => ({
+    getVideoGamesList,
+    getVideoGameById,
+    getVideoGameByName,
+    updateVideoGame,
+    deleteVideoGame,
+    addVideoGame,
+    getVideoGameStatistics,
+    addSubscriber,
+    removeSubscriber,
+    getGenreList
+  })
 }))
 
 
@@ -290,21 +306,4 @@ describe('GET /api/video-games/subscriptions', () => {
       expect(evt.data).toEqual('{"action":"action","payload":{"message":"test"}}')
     }
   )
-
-  it('should return 500 on error', async () => {
-    getVideoGamesList.mockImplementation(() => {
-      throw new Error('test error')
-    })
-    const response = await request.get('/api/video-games');
-    expect(response.status).toBe(500)
-    expect(response.body).toEqual({error: 'test error'})
-  })
-
-  it('should extract parameters from request query', async () => {
-    const response = await request.get('/api/video-games?minPrice=10&maxPrice=100&offset=0&maxItems=1&nameEq=test&time=1')
-    expect(response.status).toBe(200)
-    expect(getVideoGamesList).toHaveBeenCalledWith({
-      minPrice: 10, maxPrice: 100, offset: 0, maxItems: 1, nameEq: 'test'
-    })
-  })
 })

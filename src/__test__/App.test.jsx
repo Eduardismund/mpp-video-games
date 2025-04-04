@@ -11,9 +11,12 @@ vi.mock('../VideoGameStatisticsChart.jsx', () => ({
   default: () => <div className="vg-chart"></div>,
 }))
 
-vi.mock('../RemoteVideoGameStore.js', async () => ({
-  getVideoGameStatistics: () => ({priceMetrics: {max: 100, min: 0, percentiles: []}}),
-  getVideoGamesList: () => ({items: [], totalCount: 0}),
+vi.mock('../WrapperVideoGameStore.js', async () => ({
+  videoGameStore: {
+    getVideoGameStatistics: () => ({priceMetrics: {max: 100, min: 0, percentiles: []}}),
+    getVideoGamesList: () => ({items: [], totalCount: 0}),
+    getGenreList: () => (["Action"])
+  }
 }))
 
 describe('App', async () => {

@@ -4,8 +4,10 @@ import VideoGameLookup from '../VideoGameLookup.jsx'
 import {getDictionary} from '../dictionary.js'
 
 
-vi.mock('../RemoteVideoGameStore.js', () => ({
-  'getVideoGameByName': async (name) => name === 'Found VG' ? {id: 'vg-id'} : undefined
+vi.mock('../WrapperVideoGameStore.js', () => ({
+  videoGameStore: {
+    getVideoGameByName: async (name) => name === 'Found VG' ? {id: 'vg-id'} : undefined
+  }
 }))
 
 const mockShowToast = vi.fn()

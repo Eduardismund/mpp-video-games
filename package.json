@@ -22,6 +22,8 @@
     "backend": "node src/backend/backend.js"
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "chart.js": "^4.4.8",
     "cors": "^2.8.5",
     "crc-32": "^1.2.2",
@@ -45,11 +47,11 @@
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
+    "eventsource": "^3.0.6",
     "globals": "^16.0.0",
     "jsdom": "^26.0.0",
     "supertest": "^7.1.0",
-    "eventsource": "^3.0.6",
-    "vite": "6.2.4",
+    "vite": "6.2.5",
     "vitest": "^3.0.9"
   }
 }
