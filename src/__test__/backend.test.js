@@ -10,13 +10,13 @@ import {
   addVideoGame,
   getVideoGameStatistics,
   addSubscriber
-} from "../VideoGameStore.js";
+} from "../LocalVideoGameStore.js";
 import {getGenreList} from "../GenreStore.js";
 
 
 const request = supertest(app)
 
-vi.mock('../VideoGameStore.js', () => ({
+vi.mock('../LocalVideoGameStore.js', () => ({
   getVideoGamesList: vi.fn(),
   getVideoGameById: vi.fn(),
   getVideoGameByName: vi.fn(),

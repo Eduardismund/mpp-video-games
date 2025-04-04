@@ -12,10 +12,8 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import {videoGameStore} from "./WrapperVideoGameStore.js";
 
-// Import the notifier service
-// import {} from "./VideoGameStore.js";
-import {getVideoGameStatistics, addSubscriber} from "./RemoteVideoGameStore.js"
 
 ChartJS.register(
   CategoryScale,
@@ -74,13 +72,13 @@ function VideoGameStatisticsChart() {
   }
 
   useEffect(() => {
-    addSubscriber('statistic-chart', onStoreUpdate);
+    videoGameStore.addSubscriber('statistic-chart', onStoreUpdate);
   }, []);
 
   useEffect(() => {
     async function fetchData() {
       // Fetch data from the statistics API
-      const {priceMetrics, genrePopularity, totalCount, releaseYears} = await getVideoGameStatistics({
+      const {priceMetrics, genrePopularity, totalCount, releaseYears} = await videoGameStore.getVideoGameStatistics({
         priceMetrics: {percentiles: [10, 40, 60, 90]},
         genrePopularity: 3,
         releaseYears: true,
@@ -90,10 +88,10 @@ function VideoGameStatisticsChart() {
       // Process the data
       const priceLabels = ["10%", "40%", "60%", "90%"];
       const priceValues = [
-        priceMetrics.percentiles.find((p) => p.p === 10)?.v,
-        priceMetrics.percentiles.find((p) => p.p === 40)?.v,
-        priceMetrics.percentiles.find((p) => p.p === 60)?.v,
-        priceMetrics.percentiles.find((p) => p.p === 90)?.v,
+        priceMetrics.percentiles?.find((p) => p.p === 10)?.v,
+        priceMetrics.percentiles?.find((p) => p.p === 40)?.v,
+        priceMetrics.percentiles?.find((p) => p.p === 60)?.v,
+        priceMetrics.percentiles?.find((p) => p.p === 90)?.v,
       ].filter(elem => !!elem);
 
       // Update the chart data state
