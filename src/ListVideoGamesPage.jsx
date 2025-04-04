@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {getDictionary} from "./dictionary.js";
-import {getVideoGameStatistics, getVideoGamesList} from './RemoteVideoGameStore.js'
 import {Edit, Trash} from "lucide-react";
 import {Link, useParams, useNavigate} from "react-router-dom";
 import Pagination from "./Pagination.jsx";
+import {videoGameStore} from "./WrapperVideoGameStore.js";
 
 
 function ListVideoGamesPage() {
@@ -29,7 +29,7 @@ function ListVideoGamesPage() {
     let filterMinPrice = absoluteMinPrice
     async function fetchData() {
       if (selectedMaxPrice === -1) {
-        const {priceMetrics} = await getVideoGameStatistics({
+        const {priceMetrics} = await videoGameStore.getVideoGameStatistics({
           priceMetrics: {min: true, max: true, percentiles: [10, 40, 60, 90]}
         })
         setAbsoluteMaxPrice(filterMaxPrice = Math.ceil(priceMetrics.max))
@@ -42,7 +42,7 @@ function ListVideoGamesPage() {
           p90: priceMetrics.percentiles.find(percentile => percentile.p === 90)?.v || 0,
         })
       }
-      const {items, totalCount} = await getVideoGamesList({
+      const {items, totalCount} = await videoGameStore.getVideoGamesList({
         minPrice: filterMinPrice,
         maxPrice: filterMaxPrice,
         offset: offset,

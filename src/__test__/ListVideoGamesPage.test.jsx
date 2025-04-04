@@ -1,12 +1,14 @@
 import {describe, expect, test, vi} from 'vitest'
 import ListVideoGamesPage from "../ListVideoGamesPage.jsx";
 import {fireEvent, render, waitFor} from "@testing-library/react";
-import {getVideoGamesList, getVideoGameStatistics} from "../RemoteVideoGameStore.js";
+import {videoGameStore} from "../WrapperVideoGameStore.js";
 import {getDictionary} from "../dictionary.js";
 
-vi.mock('../RemoteVideoGameStore.js', () => ({
-  getVideoGameStatistics: vi.fn(),
-  getVideoGamesList: vi.fn()
+vi.mock('../WrapperVideoGameStore.js', () => ({
+  videoGameStore: {
+    getVideoGameStatistics: vi.fn(),
+    getVideoGamesList: vi.fn()
+  }
 }))
 
 vi.mock('react-router-dom', () => ({
@@ -18,6 +20,7 @@ vi.mock('react-router-dom', () => ({
 describe('ListVideoGamePage', () => {
 
   const dict = getDictionary('en')
+  const {getVideoGameStatistics, getVideoGamesList} = videoGameStore
   test('displays loading then no records', async () => {
     getVideoGameStatistics.mockImplementation(() => ({
       priceMetrics: {

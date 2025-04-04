@@ -1,22 +1,48 @@
 import {describe, expect, test} from 'vitest'
-import {
-  addVideoGame,
-  computeVideoGameId,
-  deleteVideoGame,
-  getVideoGameByName,
-  getVideoGamesList,
-  getVideoGameStatistics,
-  updateVideoGame,
-} from "../VideoGameStore.js";
-import expectedVideoGames from "../video-games.json"
+import {newLocalVideoGameStore,} from "../LocalVideoGameStore.js";
 import {generateRandomVideoGame} from "./test-utils.js"
 
-describe('VideoGameStore', () => {
+describe('LocalVideoGameStore', () => {
+
+  /**
+   *
+   * @type {VideoGame[]}
+   */
+  const expectedVideoGames = [
+    {
+      "name": "Dead by Daylight",
+      "genre": "Horror",
+      "releaseDate": "2016-06-14",
+      "price": 29.99,
+      "image": "https://image.jpg"
+    },
+    {
+      "name": "CSGO",
+      "genre": "First-Person Shooter",
+      "releaseDate": "2012-08-21",
+      "price": 14.99,
+      "image": "https:/image.png"
+    }
+  ]
+
+  const expectedGenreList = ["Horror", "First-Person Shooter"]
+
+
+  const subject = newLocalVideoGameStore({
+    videoGameList: expectedVideoGames.map(vg => ({...vg})),
+    genreList: [...expectedGenreList]
+  })
+
+  test("can load from jsons", async () => {
+    const localSubject = newLocalVideoGameStore({})
+    expect((await localSubject.getGenreList()).length).toBeGreaterThan(2)
+    expect((await localSubject.getVideoGamesList({})).items.length).toBeGreaterThan(2)
+  })
 
   test("get all video games", async () => {
-    const actualVideoGames = await getVideoGamesList({})
+    const actualVideoGames = await subject.getVideoGamesList({})
 
-    expect(await Promise.all(actualVideoGames.items.map(async videoGame => await computeVideoGameId(videoGame.name))))
+    expect(await Promise.all(actualVideoGames.items.map(async videoGame => await subject.computeVideoGameId(videoGame.name))))
       .toEqual(actualVideoGames.items.map(videoGame => videoGame.id))
     expect(
       actualVideoGames.items.map(({name, genre, releaseDate, price, image}) => ({
@@ -27,9 +53,9 @@ describe('VideoGameStore', () => {
   })
 
   test("get video-games with price range", async () => {
-    const actualVideoGames = await getVideoGamesList({minPrice: 10, maxPrice: 100})
+    const actualVideoGames = await subject.getVideoGamesList({minPrice: 10, maxPrice: 100})
 
-    expect(await Promise.all(actualVideoGames.items.map(async videoGame => await computeVideoGameId(videoGame.name))))
+    expect(await Promise.all(actualVideoGames.items.map(async videoGame => await subject.computeVideoGameId(videoGame.name))))
       .toEqual(actualVideoGames.items.map(videoGame => videoGame.id))
     expect(actualVideoGames.items.map(({name, genre, releaseDate, price, image}) => ({
       name, genre, releaseDate, price, image
@@ -39,25 +65,25 @@ describe('VideoGameStore', () => {
 
   test("compute video id", async () => {
     const nameVariations = ["Dead By Daylight", "dead by daylight", "deadbydaylight", "    DEADBYDAYLIGHT    ", "@^#%@DEAD#&#&#&BY#&#&#DAYLIGHT"]
-    const computedId = await computeVideoGameId(nameVariations[1])
+    const computedId = await subject.computeVideoGameId(nameVariations[1])
     expect(computedId).toMatch(/^[a-f0-9]{8}$/g)
 
-    const nameIds = await Promise.all(nameVariations.map(async videoGame => await computeVideoGameId(videoGame)))
+    const nameIds = await Promise.all(nameVariations.map(async videoGame => await subject.computeVideoGameId(videoGame)))
     const distinctNameIds = new Set(nameIds)
     expect(distinctNameIds).length(1)
   })
 
   test("add video game", async () => {
-    const initialVideoGames = await getVideoGamesList({})
+    const initialVideoGames = await subject.getVideoGamesList({})
     const newVideoGame = generateRandomVideoGame()
 
-    await addVideoGame(newVideoGame);
+    await subject.addVideoGame(newVideoGame);
 
-    const listAfterAdd = await getVideoGamesList({})
+    const listAfterAdd = await subject.getVideoGamesList({})
 
     expect(initialVideoGames.items.length + 1).toBe(listAfterAdd.items.length)
 
-    const videoGameId = await computeVideoGameId(newVideoGame.name)
+    const videoGameId = await subject.computeVideoGameId(newVideoGame.name)
 
     let foundVideoGame = listAfterAdd.items.find(videoGame => videoGame.id === videoGameId);
     expect(foundVideoGame).toEqual({...newVideoGame, id: videoGameId})
@@ -66,12 +92,12 @@ describe('VideoGameStore', () => {
 
   test("update video game successful", async () => {
     const videoGameNewState = generateRandomVideoGame();
-    const videoGamesBeforeUpdate = await getVideoGamesList({})
+    const videoGamesBeforeUpdate = await subject.getVideoGamesList({})
     videoGameNewState.id = videoGamesBeforeUpdate.items[0].id
 
-    await updateVideoGame(videoGameNewState)
+    await subject.updateVideoGame(videoGameNewState)
 
-    const videoGamesAfterUpdate = await getVideoGamesList({})
+    const videoGamesAfterUpdate = await subject.getVideoGamesList({})
 
     const {
       id,
@@ -80,30 +106,33 @@ describe('VideoGameStore', () => {
       releaseDate,
       price
     } = videoGamesAfterUpdate.items.find(videoGame => videoGame.id === videoGameNewState.id);
-    expect({id, name, genre, releaseDate, price}).toEqual({...videoGameNewState, name: videoGamesBeforeUpdate.items[0].name})
+    expect({id, name, genre, releaseDate, price}).toEqual({
+      ...videoGameNewState,
+      name: videoGamesBeforeUpdate.items[0].name
+    })
   })
 
   test("update video game id not found", async () => {
-    const initialVideoGames = await getVideoGamesList({})
+    const initialVideoGames = await subject.getVideoGamesList({})
     const videoGameNewState = generateRandomVideoGame()
     videoGameNewState.id = "1234"
 
-    await updateVideoGame(videoGameNewState)
+    await subject.updateVideoGame(videoGameNewState)
 
-    const videoGamesAfterUpdate = await getVideoGamesList({})
+    const videoGamesAfterUpdate = await subject.getVideoGamesList({})
 
     expect(videoGamesAfterUpdate).toEqual(initialVideoGames)
   })
 
   test("update video game field is empty", async () => {
     const videoGameNewState = generateRandomVideoGame();
-    const videoGames = await getVideoGamesList({})
+    const videoGames = await subject.getVideoGamesList({})
     videoGameNewState.id = videoGames.items[0].id
     videoGameNewState.genre = ""
 
-    await updateVideoGame(videoGameNewState)
+    await subject.updateVideoGame(videoGameNewState)
 
-    const videoGamesAfterUpdate = await getVideoGamesList({})
+    const videoGamesAfterUpdate = await subject.getVideoGamesList({})
 
     const {genre} = videoGamesAfterUpdate.items.find(videoGame => videoGame.id === videoGameNewState.id);
     expect(genre).not.toEqual(videoGameNewState.genre)
@@ -111,12 +140,12 @@ describe('VideoGameStore', () => {
   })
 
   test("delete video game", async () => {
-    const videoGames = await getVideoGamesList({})
+    const videoGames = await subject.getVideoGamesList({})
     const videoGameIdToDelete = videoGames.items[0].id
 
-    await deleteVideoGame(videoGameIdToDelete)
+    await subject.deleteVideoGame(videoGameIdToDelete)
 
-    const videoGamesAfterDelete = await getVideoGamesList({})
+    const videoGamesAfterDelete = await subject.getVideoGamesList({})
 
     const videoGameDeleted = videoGamesAfterDelete.items.find(videoGame => videoGame.id === videoGameIdToDelete);
     expect(videoGameDeleted).toBe(undefined)
@@ -127,42 +156,42 @@ describe('VideoGameStore', () => {
   test("get video game by name", async () => {
     const videoGameName = "CSGO"
 
-    const videoGame = await getVideoGameByName(videoGameName)
+    const videoGame = await subject.getVideoGameByName(videoGameName)
     expect(videoGame.name).toEqual(videoGameName)
   })
 
   test("get video-games with offset", async () => {
-    const allVideoGames = await getVideoGamesList({})
+    const allVideoGames = await subject.getVideoGamesList({})
     const offset = 2
 
-    const actualVideoGames = await getVideoGamesList({ offset })
+    const actualVideoGames = await subject.getVideoGamesList({offset})
 
     expect(actualVideoGames.items).toEqual(allVideoGames.items.slice(offset))
   })
 
   test("get video-games with maxItems", async () => {
-    const allVideoGames = await getVideoGamesList({})
+    const allVideoGames = await subject.getVideoGamesList({})
     const maxItems = 3
 
-    const actualVideoGames = await getVideoGamesList({ maxItems })
+    const actualVideoGames = await subject.getVideoGamesList({maxItems})
 
     expect(actualVideoGames.items.length).toBeLessThanOrEqual(maxItems)
     expect(actualVideoGames.items).toEqual(allVideoGames.items.slice(0, maxItems))
   })
 
   test("get video-games with offset and maxItems", async () => {
-    const allVideoGames = await getVideoGamesList({})
+    const allVideoGames = await subject.getVideoGamesList({})
     const offset = 1
     const maxItems = 3
 
-    const actualVideoGames = await getVideoGamesList({ offset, maxItems })
+    const actualVideoGames = await subject.getVideoGamesList({offset, maxItems})
 
     expect(actualVideoGames.items).toEqual(allVideoGames.items.slice(offset, offset + maxItems))
   })
 
 
   test('get statistics price metrics', async () => {
-    const {priceMetrics} = await getVideoGameStatistics({
+    const {priceMetrics} = await subject.getVideoGameStatistics({
       priceMetrics: {
         min: true,
         max: true,
@@ -176,14 +205,19 @@ describe('VideoGameStore', () => {
     priceMetrics?.percentiles?.map(({v}) => v).forEach(v => expect(v).toBeGreaterThanOrEqual(0))
   })
   test('get statistics no request', async () => {
-    expect(await getVideoGameStatistics({})).toEqual({})
-    expect(await getVideoGameStatistics({priceMetrics: {}})).toEqual({priceMetrics: {}})
-    expect(await getVideoGameStatistics({
+    expect(await subject.getVideoGameStatistics({})).toEqual({})
+    expect(await subject.getVideoGameStatistics({priceMetrics: {}})).toEqual({priceMetrics: {}})
+    expect(await subject.getVideoGameStatistics({
       priceMetrics: {
         min: false,
         max: false,
         percentiles: []
       }
     })).toEqual({priceMetrics: {percentiles: []}})
+  })
+
+  test("get genre list", async () => {
+    const actualGenres = await subject.getGenreList()
+    expect(actualGenres).toEqual(expectedGenreList)
   })
 })
