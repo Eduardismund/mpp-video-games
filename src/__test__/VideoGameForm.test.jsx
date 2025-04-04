@@ -50,7 +50,7 @@ vi.mock('../ToastContext.jsx', () => ({
 describe('VideoGameForm', () => {
   initVideoGameValidators({getVideoGameByName, getGenreList})
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
   })
   const dict = getDictionary('en')
   test('renders in add mode', async () => {
@@ -176,9 +176,7 @@ describe('VideoGameForm', () => {
     const {container} = render(<VideoGameForm mode="update" id="id-1"/>)
     await waitFor(() => {
     })
-    await act(() => {
-      fillFormAndSubmit(container)
-    })
+    await act(() => fillFormAndSubmit(container))
     expect(updateVideoGame).toHaveBeenCalledWith({
       id: 'id-1',
       name: 'name-1',

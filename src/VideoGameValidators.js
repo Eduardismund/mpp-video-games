@@ -12,8 +12,6 @@
  */
 
 /**
- *
- * @returns {Promise<VideoGame | undefined>}
  * @private
  */
 let _getVideoGameByName = async () => undefined
@@ -161,11 +159,33 @@ async function isNumber(price) {
   if (price === null || price === undefined || price === '') {
     return {success: true}
   }
-  const regex = /^[1-9][0-9]*(\.[0-9]{1,2})?$/;
-  if (!regex.test(price) && price.length) {
+  const regex = /^[+-]?\d*(\.\d{1,2})?$/;
+  if (!regex.test(price)) {
     return {
       success: false,
       errors: ['The price is not valid']
+    }
+  }
+  return {
+    success: true
+  }
+}
+
+/**
+ *
+ * @param {string} numStr
+ * @param {number} minValue
+ * @returns {Promise<FieldValidationResult>}
+ */
+async function minNumber(numStr, minValue) {
+  if (numStr === null || numStr === undefined || numStr === '') {
+    return {success: true}
+  }
+  const num = Number(numStr)
+  if (!isNaN(num) && num < minValue) {
+    return {
+      success: false,
+      errors: [`Must be at least ${minValue}.`]
     }
   }
   return {
@@ -244,7 +264,8 @@ const validatorsByField = {
   price: (price) => {
     return reduceFieldValidationResults([
       required(price),
-      isNumber(price)
+      isNumber(price),
+      minNumber(price, 0)
     ])
   }
 }

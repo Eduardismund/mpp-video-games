@@ -8,13 +8,17 @@ import {
   getVideoGamesList,
   getVideoGameStatistics,
   removeSubscriber,
-  updateVideoGame
+  updateVideoGame,
+  getVideoGameByName
 } from "../VideoGameStore.js";
-import {validateVideoGame} from "../VideoGameValidators.js";
+import {initVideoGameValidators, validateVideoGame} from "../VideoGameValidators.js";
 import {extractProperties} from "../utils.js";
+import {getGenreList} from "../GenreStore.js";
 
 const app = express();
 const PORT = 5000;
+
+initVideoGameValidators({getVideoGameByName, getGenreList})
 
 // Middleware
 app.use(express.json());
@@ -22,23 +26,23 @@ app.use(cors());
 
 app.get('/api/video-games/subscriptions', (req, res) => {
   const subscriberKey = crypto.randomUUID();
-  addSubscriber(subscriberKey, (action, payload) => {
-    res.write(`event: ${action}\n`);
-    res.write(`id: ${crypto.randomUUID()}\n`);
-    res.write(`data: ${JSON.stringify({action, payload})}\n\n`);
-  })
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
-
+  addSubscriber(subscriberKey, (action, payload) => {
+    res.write(`event: ${action}\n`);
+    res.write(`id: ${crypto.randomUUID()}\n`);
+    res.write(`data: ${JSON.stringify({action, payload})}\n\n`)
+  })
   req.on('close', () => {
     removeSubscriber(subscriberKey);
     console.log(`Client ${subscriberKey} disconnected`);
     res.end();
   });
 });
+
 // CREATE a new game
 app.post('/api/video-games', async (req, res) => {
   try {
@@ -146,5 +150,6 @@ app.delete('/api/video-games/:id', async (req, res) => {
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+export default app
 
 
