@@ -7,11 +7,26 @@
 /**
  * @callback fieldValidator
  * @param {any} fieldValue
+ * @param {string} [mode]
  * @return {Promise<FieldValidationResult>}
  */
 
-import {getVideoGameByName} from "./VideoGameStore.js";
-import {getGenreList} from "./GenreStore.js";
+/**
+ * @private
+ */
+let _getVideoGameByName = async () => undefined
+/**
+ *
+ * @returns {Promise<string[]>}
+ * @private
+ */
+let _getGenreList = async () => []
+
+
+export function initVideoGameValidators({getVideoGameByName, getGenreList}) {
+  _getVideoGameByName = getVideoGameByName
+  _getGenreList = getGenreList
+}
 
 /**
  *
@@ -21,6 +36,24 @@ import {getGenreList} from "./GenreStore.js";
 export function getFieldValidator(fieldName) {
   return validatorsByField[fieldName]
     || (() => Promise.resolve({success: true}))
+}
+
+/**
+ *
+ * @param {{name: string, genre: string, releaseDate:string, price: string}} formData
+ * @param {'create'|'update'} mode
+ * @returns {Promise<{name?: string[], genre?: string[], releaseDate?: string[], price?: string[]}>}
+ */
+export async function validateVideoGame(formData, mode) {
+  const result = {}
+  for (let key of Object.keys(formData)) {
+    const validator = getFieldValidator(key)
+    const fieldResult = await validator(formData[key], mode)
+    if (!fieldResult.success) {
+      result[key] = fieldResult.errors
+    }
+  }
+  return result
 }
 
 
@@ -48,7 +81,7 @@ function required(fieldValue) {
  * @returns {Promise<FieldValidationResult>}
  */
 async function videoGameAlreadyExists(videoGameName) {
-  const videoGame = await getVideoGameByName(videoGameName)
+  const videoGame = await _getVideoGameByName(videoGameName)
   if (videoGame) {
     return {
       success: false,
@@ -105,7 +138,7 @@ async function existingGenre(genre) {
       success: true
     }
   }
-  if (!(await getGenreList()).find(genreName => genreName === genre)) {
+  if (!(await _getGenreList()).find(genreName => genreName === genre)) {
     return {
       success: false,
       errors: [`The genre ${genre} is not a valid option`]
@@ -126,11 +159,33 @@ async function isNumber(price) {
   if (price === null || price === undefined || price === '') {
     return {success: true}
   }
-  const regex = /^[1-9][0-9]*(\.[0-9]{1,2})?$/;
-  if (!regex.test(price) && price.length) {
+  const regex = /^[+-]?\d*(\.\d{1,2})?$/;
+  if (!regex.test(price)) {
     return {
       success: false,
       errors: ['The price is not valid']
+    }
+  }
+  return {
+    success: true
+  }
+}
+
+/**
+ *
+ * @param {string} numStr
+ * @param {number} minValue
+ * @returns {Promise<FieldValidationResult>}
+ */
+async function minNumber(numStr, minValue) {
+  if (numStr === null || numStr === undefined || numStr === '') {
+    return {success: true}
+  }
+  const num = Number(numStr)
+  if (!isNaN(num) && num < minValue) {
+    return {
+      success: false,
+      errors: [`Must be at least ${minValue}.`]
     }
   }
   return {
@@ -179,6 +234,7 @@ async function reduceFieldValidationResults(resultPromises) {
   return result
 }
 
+
 const validatorsByField = {
   name: (name, mode) => {
     if (mode === 'update') {
@@ -208,7 +264,8 @@ const validatorsByField = {
   price: (price) => {
     return reduceFieldValidationResults([
       required(price),
-      isNumber(price)
+      isNumber(price),
+      minNumber(price, 0)
     ])
   }
 }

@@ -4,7 +4,7 @@ import VideoGameLookup from '../VideoGameLookup.jsx'
 import {getDictionary} from '../dictionary.js'
 
 
-vi.mock('../VideoGameStore.js', () => ({
+vi.mock('../RemoteVideoGameStore.js', () => ({
   'getVideoGameByName': async (name) => name === 'Found VG' ? {id: 'vg-id'} : undefined
 }))
 

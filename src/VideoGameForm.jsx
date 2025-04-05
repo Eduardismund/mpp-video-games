@@ -1,10 +1,9 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {getDictionary} from "./dictionary.js";
-import {getFieldValidator} from "./VideoGameValidators.js";
-import {addVideoGame, deleteVideoGame, getVideoGameById, updateVideoGame} from "./VideoGameStore.js";
-import {getGenreList} from "./GenreStore.js";
+import {getFieldValidator, initVideoGameValidators, validateVideoGame} from "./VideoGameValidators.js";
 import {useToast} from "./ToastContext.jsx";
+import {videoGameStore} from "./WrapperVideoGameStore.js";
 
 /**
  *
@@ -14,6 +13,10 @@ import {useToast} from "./ToastContext.jsx";
  * @constructor
  */
 function VideoGameForm({id, mode}) {
+  initVideoGameValidators({
+    getVideoGameByName: async (name) =>  videoGameStore.getVideoGameByName(name),
+    getGenreList: async () => await videoGameStore.getGenreList()
+  })
   let initialState = {name: "", genre: "", releaseDate: "", price: ""};
   const [formData, setFormData] = useState(initialState)
   const [genreOptions, setGenreOptions] = useState([])
@@ -25,9 +28,9 @@ function VideoGameForm({id, mode}) {
 
   useEffect(() => {
     const fetchData = async () => {
-      setGenreOptions(await getGenreList())
+      setGenreOptions(await videoGameStore.getGenreList())
       if (mode === 'update' || mode === 'delete') {
-        const videoGame = await getVideoGameById(id)
+        const videoGame = await videoGameStore.getVideoGameById(id)
         if (!videoGame) {
           showToast("Video game not found!", "error")
           return
@@ -77,12 +80,15 @@ function VideoGameForm({id, mode}) {
   }
 
   async function performFieldValidations() {
-    const results = await Promise.all(Object.keys(formData).map(key => getFieldValidator(key)(formData[key], mode)))
-    const newErrors = Object.keys(formData).map((key, index) => ({key, result: results[index]}))
-      .filter(({result}) => !result.success)
-      .reduce((previous, current) => ({...previous, [current.key]: current.result.errors}), {})
-    setErrors(newErrors)
-    return Object.keys(newErrors).length < 1
+
+    try{
+      const newErrors = await validateVideoGame(formData, mode)
+      setErrors(newErrors)
+      return Object.keys(newErrors).length < 1
+    } catch (ex){
+      console.error(ex)
+    }
+
   }
 
   async function handleSubmit(e) {
@@ -93,16 +99,16 @@ function VideoGameForm({id, mode}) {
           message: 'Are you sure you want to delete this video game?',
           confirmLabel: 'Yes, Delete',
           onConfirm: async () => {
-            await deleteVideoGame(`${id}`)
+            await videoGameStore.deleteVideoGame(`${id}`)
             showToast("Video Game Deleted Successfully!", "success")
             navigate(`/list-video-games`)
           }
         })
       } else if (mode === "update") {
-        await updateVideoGame(mapFormDataToVideoGame(formData));
+        await videoGameStore.updateVideoGame(mapFormDataToVideoGame(formData));
         showToast("Video Game Updated Successfully!", "success")
       } else {
-        const id = await addVideoGame(mapFormDataToVideoGame(formData))
+        const id = await videoGameStore.addVideoGame(mapFormDataToVideoGame(formData))
         showToast("Video Game Added Successfully!", "success")
         navigate(`/update-video-game/${id}`)
       }
