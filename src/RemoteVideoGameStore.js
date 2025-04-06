@@ -164,7 +164,8 @@ class RemoteVideoGameStore {
             body: JSON.stringify(extractProperties(videoGame, {
                 genre: 'string',
                 releaseDate: 'string',
-                price: 'string'
+                price: 'string',
+                image: 'string'
             }))
         }))
     }

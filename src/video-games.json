@@ -4,217 +4,84 @@
     "genre": "Horror",
     "releaseDate": "2016-06-14",
     "price": 29.99,
-    "image": "https://upload.wikimedia.org/wikipedia/en/1/1b/Dead_by_Daylight_logo.jpg"
+    "image": "daf970b2-7f45-4a50-bda6-bd840f17cf47.png"
   },
   {
     "name": "CSGO",
     "genre": "First-Person Shooter",
     "releaseDate": "2012-08-21",
-    "price": 14.99,
-    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Counter-Strike_Global_Offensive_logo.svg/1200px-Counter-Strike_Global_Offensive_logo.svg.png"
+    "price": 14.99
   },
   {
     "name": "Witch It",
     "genre": "Survival / Multiplayer",
     "releaseDate": "2017-07-20",
-    "price": 19.99,
-    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Witch_It_Logo.png/1200px-Witch_It_Logo.png"
+    "price": 19.99
   },
   {
     "name": "Apex Legends",
     "genre": "Battle Royale",
     "releaseDate": "2019-02-04",
-    "price": 0,
-    "image": "https://upload.wikimedia.org/wikipedia/commons/3/39/Apex_Legends_logo.png"
+    "price": 0.00
   },
   {
     "name": "The Witcher 3: Wild Hunt",
     "genre": "Action RPG",
     "releaseDate": "2015-05-19",
-    "price": 39.99,
-    "image": "https://upload.wikimedia.org/wikipedia/commons/a/a7/The_Witcher_3_Wild_Hunt_logo.jpg"
+    "price": 39.99
   },
   {
     "name": "Minecraft",
     "genre": "Sandbox",
     "releaseDate": "2011-11-18",
-    "price": 26.95,
-    "image": "https://upload.wikimedia.org/wikipedia/commons/5/51/Minecraft_logo.png"
+    "price": 26.95
   },
   {
     "name": "Cyberpunk 2077",
     "genre": "RPG",
     "releaseDate": "2020-12-10",
-    "price": 59.99,
-    "image": "https://upload.wikimedia.org/wikipedia/en/9/9f/Cyberpunk_2077_box_art.jpg"
+    "price": 59.99
   },
   {
     "name": "Overwatch",
     "genre": "First-Person Shooter",
     "releaseDate": "2016-05-24",
-    "price": 39.99,
-    "image": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Overwatch_logo_2019.svg"
+    "price": 39.99
   },
   {
     "name": "Red Dead Redemption 2",
     "genre": "Action-Adventure",
     "releaseDate": "2018-10-26",
-    "price": 59.99,
-    "image": "https://upload.wikimedia.org/wikipedia/en/d/d4/Red_Dead_Redemption_2_cover_art.jpg"
+    "price": 59.99
   },
   {
     "name": "Fortnite",
     "genre": "Battle Royale",
     "releaseDate": "2017-09-26",
-    "price": 0,
-    "image": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Fortnite_Logo.png"
-  },
-  {
-    "name": "Halo Infinite",
-    "genre": "First-Person Shooter",
-    "releaseDate": "2021-12-08",
-    "price": 59.99,
-    "image": "https://upload.wikimedia.org/wikipedia/en/e/e1/Halo_Infinite.png"
-  },
+    "price": 0.00
+  }, {
+  "name": "Halo Infinite",
+  "genre": "First-Person Shooter",
+  "releaseDate": "2021-12-08",
+  "price": 59.99,
+  "image": "coming-soon.jpeg"
+},
   {
     "name": "Resident Evil 4 Remake",
     "genre": "Survival Horror",
     "releaseDate": "2023-03-24",
-    "price": 59.99,
-    "image": "https://upload.wikimedia.org/wikipedia/en/2/24/Resident_Evil_4_Remake_cover.jpg"
+    "price": 59.99
   },
   {
     "name": "GTA V",
     "genre": "Action-Adventure",
     "releaseDate": "2013-09-17",
-    "price": 29.99,
-    "image": "https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png"
+    "price": 29.99
   },
   {
     "name": "Elden Ring",
     "genre": "Action RPG",
     "releaseDate": "2022-02-25",
-    "price": 59.99,
-    "image": "https://upload.wikimedia.org/wikipedia/en/b/b9/Elden_Ring_Box_art.jpg"
-  },
-  {
-    "name": "Modern Metal Sausages",
-    "genre": "RPG",
-    "releaseDate": "2014-03-28",
-    "price": 90.89
-  },
-  {
-    "name": "Elegant Steel Bacon",
-    "genre": "RPG",
-    "releaseDate": "2013-02-02",
-    "price": 4.04
-  },
-  {
-    "name": "Unbranded Fresh Shirt",
-    "genre": "Action-Adventure",
-    "releaseDate": "2006-06-13",
-    "price": 39.06
-  },
-  {
-    "name": "Fantastic Fresh Bike",
-    "genre": "Sandbox",
-    "releaseDate": "2009-06-06",
-    "price": 51.24
-  },
-  {
-    "name": "Modern Plastic Keyboard",
-    "genre": "First-Person Shooter",
-    "releaseDate": "2011-04-26",
-    "price": 86.75
-  },
-  {
-    "name": "Practical Concrete Fish",
-    "genre": "Sandbox",
-    "releaseDate": "2013-10-16",
-    "price": 5.78
-  },
-  {
-    "name": "Tasty Fresh Ball",
-    "genre": "Horror",
-    "releaseDate": "2008-01-04",
-    "price": 11.95
-  },
-  {
-    "name": "Practical Plastic Ball",
-    "genre": "Sandbox",
-    "releaseDate": "2012-04-07",
-    "price": 49.93
-  },
-  {
-    "name": "Rustic Rubber Cheese",
-    "genre": "Sandbox",
-    "releaseDate": "2021-04-20",
-    "price": 11.24
-  },
-  {
-    "name": "Intelligent Fresh Shirt",
-    "genre": "Sandbox",
-    "releaseDate": "2008-05-19",
-    "price": 5.38
-  },
-  {
-    "name": "Luxurious Concrete Chair",
-    "genre": "Battle Royale",
-    "releaseDate": "2023-07-29",
-    "price": 4.71
-  },
-  {
-    "name": "Electronic Cotton Gloves",
-    "genre": "Action RPG",
-    "releaseDate": "2014-06-12",
-    "price": 93.83
-  },
-  {
-    "name": "Luxurious Metal Gloves",
-    "genre": "Survival / Multiplayer",
-    "releaseDate": "2018-06-30",
-    "price": 62.22
-  },
-  {
-    "name": "Unbranded Granite Fish",
-    "genre": "RPG",
-    "releaseDate": "2011-12-20",
-    "price": 24.07
-  },
-  {
-    "name": "Tasty Fresh Shoes",
-    "genre": "Horror",
-    "releaseDate": "2006-07-29",
-    "price": 72.11
-  },
-  {
-    "name": "Oriental Wooden Computer",
-    "genre": "Action RPG",
-    "releaseDate": "2015-09-24",
-    "price": 42.84
-  },
-  {
-    "name": "Recycled Rubber Chips",
-    "genre": "Sandbox",
-    "releaseDate": "2014-01-04",
-    "price": 89.51
-  },
-  {
-    "name": "Rustic Plastic Sausages",
-    "genre": "Action RPG",
-    "releaseDate": "2014-04-27",
-    "price": 2.83
-  },
-  {
-    "name": "Ergonomic Metal Soap",
-    "genre": "Battle Royale",
-    "releaseDate": "2021-07-15",
-    "price": 89.95
-  },
-  {
-    "name": "Generic Bronze Ball",
-    "genre": "Survival / Multiplayer",
-    "releaseDate": "2022-09-24",
-    "price": 30.06
+    "price": 59.99
   }
 ]

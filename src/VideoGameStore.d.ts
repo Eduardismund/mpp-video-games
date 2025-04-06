@@ -4,6 +4,7 @@ interface VideoGame {
   genre: string
   releaseDate: string
   price: number
+  image?: string
 }
 
 interface VideoGameListPage {

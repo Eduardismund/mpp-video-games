@@ -1,11 +1,12 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {Edit, Trash} from "lucide-react";
+import {fileStore} from "./FileStore.js";
 
 const VideoGameCard = ({ game, priceClass}) => {
   return (
     <div className={`card ${priceClass}`}>
-      <img src="/images/coming-soon.jpeg" alt={game.name} />
+      <img src={fileStore.getPathToFile(game.image ?? 'coming-soon.jpeg')} alt={game.name} />
       <div className="card-content">
         <h2>{game.name}</h2>
         <p>Genre: {game.genre}</p>

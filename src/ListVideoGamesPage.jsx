@@ -49,7 +49,6 @@ function ListVideoGamesPage() {
         maxItems: pageSize
       })
       setVideoGameList([...videoGameList, ...items])
-      console.log(items, videoGameList)
       setTotalCount(totalCount)
       setLoaded(true)
     }
@@ -84,9 +83,7 @@ function ListVideoGamesPage() {
   useEffect(() => {
     const handleScroll = () => {
       const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-      console.log(scrollTop, scrollHeight, clientHeight)
       if (scrollTop + clientHeight >= scrollHeight) {
-        console.log(offsetRef.current, totalCountRef.current)
         if (offsetRef.current < totalCountRef.current) {
           setOffset(prev => prev + pageSize)
         }

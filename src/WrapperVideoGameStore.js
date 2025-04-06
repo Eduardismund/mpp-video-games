@@ -96,7 +96,25 @@ class WrapperVideoGameStore {
 
     }
 
+  async uploadVideoGameFile(videoGameId, file) {
+    const formData = new FormData();
+    formData.append('file', file); // Append the file to the FormData object
+    formData.append('videoGameId', videoGameId); // Optionally append other data, like video game ID
 
+    console.log(formData)
+    const response = await this.fetchOrThrow(fetch(`/api/video-games/${videoGameId}/upload`, {
+      method: 'POST',
+      body: formData // Sending the form data as the body
+    }));
+
+    if (response.ok) {
+      const responseBody = await response.json();
+      console.log('File uploaded successfully:', responseBody);
+      console.log('File saved at:', responseBody.filename);
+    } else {
+      throw new Error('File upload failed');
+    }
+  }
     /**
      *
      * @param {'ERR_NET' | 'ERR_SERVER' | string} [reason]
@@ -275,6 +293,7 @@ class WrapperVideoGameStore {
         })
     }
 
+    // noinspection JSUnusedLocalSymbols
     onModeChange = (mode, reason) => {
     }
 
