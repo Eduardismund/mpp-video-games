@@ -4,6 +4,8 @@ import {getDictionary} from "./dictionary.js";
 import {getFieldValidator, initVideoGameValidators, validateVideoGame} from "./VideoGameValidators.js";
 import {useToast} from "./ToastContext.jsx";
 import {videoGameStore} from "./WrapperVideoGameStore.js";
+import {fileStore} from "./FileStore.js";
+import UploadForm from "./UploadForm.jsx";
 
 /**
  *
@@ -14,7 +16,7 @@ import {videoGameStore} from "./WrapperVideoGameStore.js";
  */
 function VideoGameForm({id, mode}) {
   initVideoGameValidators({
-    getVideoGameByName: async (name) =>  videoGameStore.getVideoGameByName(name),
+    getVideoGameByName: async (name) => videoGameStore.getVideoGameByName(name),
     getGenreList: async () => await videoGameStore.getGenreList()
   })
   let initialState = {name: "", genre: "", releaseDate: "", price: ""};
@@ -24,7 +26,7 @@ function VideoGameForm({id, mode}) {
   const navigate = useNavigate()
   const dictionary = getDictionary("en").videoGameFields
   const {showToast, showConfirmation} = useToast();
-
+  const [gameImage, setGameImage] = useState("")
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,11 +43,12 @@ function VideoGameForm({id, mode}) {
         const newFormData = {...videoGame, price: `${videoGame.price}`}
         delete newFormData.id
         setFormData(newFormData)
+        mode === 'update' ? setGameImage(fileStore.getPathToFile(videoGame.image ?? 'coming-soon.jpeg')) : setGameImage(fileStore.getPathToFile('coming-soon.jpeg'))
       }
     }
     // noinspection JSIgnoredPromiseFromCall
     fetchData()
-  }, [id, mode, setFormData])
+  }, [id, mode])
 
   const handleChange = async (e) => {
     const {name, value} = e.target
@@ -57,6 +60,11 @@ function VideoGameForm({id, mode}) {
     } else {
       setErrors({...errors, [name]: vldRes.errors})
     }
+
+  }
+  const handleImageChange = async (image) => {
+    await videoGameStore.updateVideoGame({id, image});
+    setGameImage(fileStore.getPathToFile(image))
 
   }
 
@@ -81,11 +89,11 @@ function VideoGameForm({id, mode}) {
 
   async function performFieldValidations() {
 
-    try{
+    try {
       const newErrors = await validateVideoGame(formData, mode)
       setErrors(newErrors)
       return Object.keys(newErrors).length < 1
-    } catch (ex){
+    } catch (ex) {
       console.error(ex)
     }
 
@@ -129,59 +137,69 @@ function VideoGameForm({id, mode}) {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="form-container">
+      <div className={`video-game-form-container ${mode}`}>
 
-        <div className="form-group name">
-          <label>{mode === 'delete' ? dictionary.name.shortName : dictionary.name.inputName}</label>
-          <input name="name"
-                 value={formData.name}
-                 onChange={handleChange}
-                 placeholder={dictionary.name.shortName}
-                 readOnly={mode === "update"}
-                 disabled={mode === 'delete'}
-          />
-          {errors.name && <span className="error">{errors.name}</span>}
+        <form onSubmit={handleSubmit} className="form-container">
 
-        </div>
-        <div className="form-group genre">
-          <label>{mode === 'delete' ? dictionary.genre.shortName : dictionary.genre.inputName}</label>
-          <select name="genre"
-                  value={formData.genre}
-                  onChange={handleChange}
-                  placeholder={dictionary.genre.shortName}
-                  disabled={mode === 'delete'}>
-            <option></option>
-            {genreOptions.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          {errors.genre && <span className="error">{errors.genre}</span>}
+          <div className="form-group name">
+            <label>{mode === 'delete' ? dictionary.name.shortName : dictionary.name.inputName}</label>
+            <input name="name"
+                   value={formData.name}
+                   onChange={handleChange}
+                   placeholder={dictionary.name.shortName}
+                   readOnly={mode === "update"}
+                   disabled={mode === 'delete'}
+            />
+            {errors.name && <span className="error">{errors.name}</span>}
 
-        </div>
-        <div className="form-group releaseDate">
-          <label>{mode === 'delete' ? dictionary.releaseDate.shortName : dictionary.releaseDate.inputName}</label>
-          <input name="releaseDate"
-                 value={formData.releaseDate}
-                 onChange={handleChange}
-                 placeholder={dictionary.releaseDate.shortName}
-                 disabled={mode === 'delete'}/>
-          {errors.releaseDate && <span className="error">{errors.releaseDate}</span>}
+          </div>
+          <div className="form-group genre">
+            <label>{mode === 'delete' ? dictionary.genre.shortName : dictionary.genre.inputName}</label>
+            <select name="genre"
+                    value={formData.genre}
+                    onChange={handleChange}
+                    placeholder={dictionary.genre.shortName}
+                    disabled={mode === 'delete'}>
+              <option></option>
+              {genreOptions.map((option, index) => (
+                <option key={index} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            {errors.genre && <span className="error">{errors.genre}</span>}
 
-        </div>
-        <div className="form-group price">
-          <label>{mode === 'delete' ? dictionary.price.shortName : dictionary.price.inputName}</label>
-          <input name="price"
-                 value={formData.price}
-                 onChange={handleChange}
-                 placeholder={dictionary.price.shortName}
-                 disabled={mode === 'delete'}/>
-          {errors.price && <span className="error">{errors.price}</span>}
+          </div>
+          <div className="form-group releaseDate">
+            <label>{mode === 'delete' ? dictionary.releaseDate.shortName : dictionary.releaseDate.inputName}</label>
+            <input name="releaseDate"
+                   value={formData.releaseDate}
+                   onChange={handleChange}
+                   placeholder={dictionary.releaseDate.shortName}
+                   disabled={mode === 'delete'}/>
+            {errors.releaseDate && <span className="error">{errors.releaseDate}</span>}
 
-        </div>
-        <button type="submit" disabled={Object.keys(errors).length > 0}>{submitButtonLabel()}</button>
-      </form>
+          </div>
+          <div className="form-group price">
+            <label>{mode === 'delete' ? dictionary.price.shortName : dictionary.price.inputName}</label>
+            <input name="price"
+                   value={formData.price}
+                   onChange={handleChange}
+                   placeholder={dictionary.price.shortName}
+                   disabled={mode === 'delete'}/>
+            {errors.price && <span className="error">{errors.price}</span>}
+
+          </div>
+          <button type="submit" disabled={Object.keys(errors).length > 0}>{submitButtonLabel()}</button>
+        </form>
+        {mode === "create" ? "" :
+          <div className="image-container">
+            <img src={gameImage} alt={"Video Game Poster"}/>
+            {mode === "delete" ? "" : <UploadForm onChange={handleImageChange}/>}
+          </div>
+        }
+      </div>
+
     </>
 
   )

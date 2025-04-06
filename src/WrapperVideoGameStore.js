@@ -96,7 +96,6 @@ class WrapperVideoGameStore {
 
     }
 
-
     /**
      *
      * @param {'ERR_NET' | 'ERR_SERVER' | string} [reason]
@@ -275,6 +274,7 @@ class WrapperVideoGameStore {
         })
     }
 
+    // noinspection JSUnusedLocalSymbols
     onModeChange = (mode, reason) => {
     }
 
