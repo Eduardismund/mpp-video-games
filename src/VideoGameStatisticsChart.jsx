@@ -13,6 +13,7 @@ import {
   Tooltip,
 } from "chart.js";
 import {videoGameStore} from "./WrapperVideoGameStore.js";
+import ChartContainer from "./ChartContainer.jsx";
 
 
 ChartJS.register(
@@ -155,38 +156,43 @@ function VideoGameStatisticsChart() {
   }, [storeUpdateCount]);
 
   return (
-    <div style={{maxWidth: "600px", margin: "auto"}}>
-      <div>'Price Percentiles'</div>
-      <Bar
-        data={pricePercentilesData}
-        options={{
-          responsive: true,
-          indexAxis: "y", // This makes the chart horizontal
-          scales: {
-            x: {
-              beginAtZero: true,
+    <>
+      <ChartContainer>
+        <Bar
+          data={pricePercentilesData}
+          options={{
+            responsive: true,
+            indexAxis: "y", // This makes the chart horizontal
+            scales: {
+              x: {
+                beginAtZero: true,
+              },
             },
-          },
-        }}
-      />
-      <Pie
-        data={genrePopularityData}
-        options={{
-          responsive: true,
-        }}
-      />
-      <Line
-        data={releaseYears}
-        options={{
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
+          }}
+        />
+      </ChartContainer>
+      <ChartContainer>
+        <Pie
+          data={genrePopularityData}
+          options={{
+            responsive: true,
+          }}
+        />
+      </ChartContainer>
+      <ChartContainer>
+        <Line
+          data={releaseYears}
+          options={{
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
             },
-          },
-        }}
-      />
-    </div>
+          }}
+        />
+      </ChartContainer>
+    </>
   );
 }
 

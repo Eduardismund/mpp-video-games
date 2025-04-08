@@ -20,7 +20,10 @@ function App() {
       <BrowserRouter>
         <Header/>
         <SidePanel/>
-        <div className={"scene"}>
+        <div className="charts">
+          <VideoGameStatisticsChart/>
+        </div>
+        <div className="scene">
           <div className="scene-container">
             <ToastProvider>
               <Routes>
@@ -35,9 +38,6 @@ function App() {
                 <Route path="/list-video-games/:page" element={<ListVideoGamesPage/>}/>
               </Routes>
             </ToastProvider>
-          </div>
-          <div className="charts">
-            <VideoGameStatisticsChart/>
           </div>
         </div>
       </BrowserRouter>

@@ -57,11 +57,85 @@ html, body {
   height: calc(100vh - var(--header-height));
   width: var(--side-panel-width);
   background: #222;
-  padding: 20px;
+  padding: 10px 20px;
   font-family: 'Press Start 2P', cursive;
   color: white;
   box-shadow: 4px 0 10px rgba(255, 0, 255, 0.3);
   box-sizing: border-box;
+  transition: 1s;
+  z-index: 2;
+}
+
+.side-panel .side-panel-toggle {
+  text-decoration: none;
+  color: #fff;
+  width: 100%;
+  text-align: right;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.side-panel .side-panel-toggle>* {
+  transition: .3s;
+}
+
+.side-panel .side-panel-toggle:hover>* {
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff;
+}
+
+.side-panel.contracted {
+  width: 30px;
+  padding: 20px 2px;
+}
+
+.charts {
+  position: fixed;
+  left: 40px;
+  top: var(--header-height);
+  height: calc(100vh - var(--header-height));
+  width: calc(var(--side-panel-width) - 40px);
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.chart-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: .3s;
+  justify-content: center;
+}
+
+.chart-container.focused {
+  position: fixed;
+  top: 70px;
+  left: 70px;
+  right: 70px;
+  bottom: 70px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  z-index: 3;
+}
+
+.chart-container .chart-container-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  opacity: .8;
+  transition: opacity .5s ease;
+  cursor: pointer;
+}
+.chart-container .chart-container-overlay:hover {
+  opacity: .3;
+}
+
+.chart-container.focused .chart-container-overlay {
+  width: 0;
 }
 
 .header h1 {
@@ -100,6 +174,18 @@ ul.nav-menu {
   font-family: 'Press Start 2P', cursive;
 }
 
+.side-panel .nav-menu a span {
+  transition: .4s;
+  white-space: nowrap;
+  overflow: hidden;
+  width: calc(100% - 30px);
+}
+
+.side-panel.contracted .nav-menu a span {
+  width: 0;
+  opacity: 0;
+}
+
 .side-panel .nav-menu a .icon {
   margin-right: 10px;
 }
@@ -115,9 +201,13 @@ ul.nav-menu > li {
 }
 
 .side-panel ul.nav-menu li {
-  padding: 10px;
+  /*padding: 10px;*/
   margin-bottom: 20px;
   font-size: 10px;
+}
+
+.side-panel.contracted ul.nav-menu li {
+  padding: 0 0 0 4px;
 }
 
 ul.nav-menu > li > .content {
