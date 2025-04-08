@@ -3,6 +3,7 @@ import cors from 'cors';
 import {initVideoGameValidators, validateVideoGame} from "../VideoGameValidators.js";
 import {extractProperties} from "../utils.js";
 import {newLocalVideoGameStore} from "../LocalVideoGameStore.js";
+import {generateSingularVideoGame} from "../data-generator/data-generator-fn.js";
 
 const app = express();
 const PORT = 5000;
@@ -175,6 +176,13 @@ app.delete('/api/video-games/:id', async (req, res) => {
     res.status(500).json({error: err.message});
   }
 });
+
+setInterval(async () => {
+  await store.addVideoGame(generateSingularVideoGame(
+    {genres: await store.getGenreList(),
+    uniqueNames: new Set((await store.getVideoGamesList({}))
+      .items.map(videoGame => videoGame.name))}))
+}, 200)
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

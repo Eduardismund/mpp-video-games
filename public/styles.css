@@ -49,6 +49,7 @@ html, body {
   font-family: 'Press Start 2P', cursive;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   position: fixed;
+  z-index: 1;
 }
 
 .side-panel {
@@ -75,11 +76,11 @@ html, body {
   margin-bottom: 10px;
 }
 
-.side-panel .side-panel-toggle>* {
+.side-panel .side-panel-toggle > * {
   transition: .3s;
 }
 
-.side-panel .side-panel-toggle:hover>* {
+.side-panel .side-panel-toggle:hover > * {
   color: #ff00ff;
   text-shadow: 0 0 10px #ff00ff;
 }
@@ -130,6 +131,7 @@ html, body {
   transition: opacity .5s ease;
   cursor: pointer;
 }
+
 .chart-container .chart-container-overlay:hover {
   opacity: .3;
 }
@@ -329,67 +331,70 @@ ul.nav-menu > li > .content {
 
 /*endregion forms*/
 
-/* region tables */
-.table-container {
+
+/*region cards*/
+
+.card-grid {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 10px;
+  gap: 20px;
+  padding: 10px;
+  flex-flow: column nowrap;
 }
 
-/* Table Styling */
-.table-container table {
-  width: 90%;
-  max-width: 900px;
-  border-collapse: collapse;
-  background: #f8f9fa;
-  border-radius: 10px;
+.card-grid .card {
+  display: flex;
+  background-color: #fff;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  position: relative;
 }
 
-.table-container thead {
-  background: #222250;
-  color: white;
-}
+/*.card-grid .card:hover {*/
+/*  transform: scale(1.03);*/
+/*}*/
 
-.table-container th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.table-container tbody tr:hover {
-  background: #eee;
-}
-
-/* Image Styling */
-.table-container .game-image {
-  width: 80px;
-  height: 80px;
+.card-grid .card img {
+  height: 180px;
+  width: 180px;
   object-fit: cover;
-  border-radius: 10px;
 }
 
-.table-container a {
-  color: #666;
-  margin: 0 5px;
+.card-grid .card-content {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 15px;
+  text-align: left;
+  justify-content: space-between;
 }
 
-.table-container a:hover {
-  color: #666;
+.card-grid .card-content h2 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
 }
 
-.table-container a:hover svg {
-  transition: 1s;
-
+.card-grid .card-content p {
+  margin: 4px 0;
+  color: #555;
 }
 
-.table-container a:hover svg {
-  filter: drop-shadow(0 -2px 5px #ff00ff);
+.card-grid .price {
+  justify-self: flex-end;
+  font-weight: bold;
+  font-size: 40px;
+  color: #10b981;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 0 10px;
 }
 
-/* Filter Section BELOW the table */
+.card-grid .price:before {
+  content: '$';
+}
+
+  /* Filter Section BELOW the table */
 .filter-container {
   position: fixed;
   bottom: 0;
@@ -406,7 +411,7 @@ ul.nav-menu > li > .content {
 
 
 /* Slider Styling */
-input[type="range"] {
+.filter-container input[type="range"] {
   width: 200px;
   cursor: pointer;
   accent-color: #222250;
@@ -414,15 +419,7 @@ input[type="range"] {
 
 /* Responsive */
 @media (max-width: 768px) {
-  table {
-    width: 100%;
-    font-size: 14px;
-  }
 
-  .game-image {
-    width: 60px;
-    height: 60px;
-  }
 
   .filter-container {
     flex-direction: column;
@@ -430,24 +427,12 @@ input[type="range"] {
     margin-top: 10px;
   }
 
-  input[type="range"] {
+  .filter-container input[type="range"] {
     width: 100%;
   }
 }
 
-.table-container tbody tr.p10 td:nth-child(5) {
-  background: #008800;
-}
-
-.table-container tbody tr.median td:nth-child(5) {
-  background: #1aaac8;
-}
-
-.table-container tbody tr.p90 td:nth-child(5) {
-  background: #cc0000;
-}
-
-/* endregion tables */
+/*endregion cards*/
 
 /* Delete Confirmation Overlay */
 .confirmation-overlay {
@@ -537,6 +522,7 @@ input[type="range"] {
     opacity: 1;
   }
 }
+
 .pagination {
   display: flex;
   list-style: none;

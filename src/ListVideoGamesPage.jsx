@@ -1,32 +1,32 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getDictionary} from "./dictionary.js";
-import {Edit, Trash} from "lucide-react";
-import {Link, useParams, useNavigate} from "react-router-dom";
-import Pagination from "./Pagination.jsx";
 import {videoGameStore} from "./WrapperVideoGameStore.js";
+import VideoGameCard from "./VideoGameCard.jsx";
 
 
 function ListVideoGamesPage() {
-  const [videoGameList, setVideoGameList] = useState([]);
-  const [pricePercentiles, setPricePercentiles] = useState({});
-  const [selectedMaxPrice, setSelectedMaxPrice] = useState(-1);
-  const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState(0);
-  const [absoluteMinPrice, setAbsoluteMinPrice] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loaded, setLoaded] = useState(false);
-  const {page} = useParams()
-  const navigate = useNavigate()
-  const pageNumber = Number(page || 1)
+  const [videoGameList, setVideoGameList] = useState([])
+  const [pricePercentiles, setPricePercentiles] = useState({})
+  const [selectedMaxPrice, setSelectedMaxPrice] = useState(-1)
+  const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState(0)
+  const [absoluteMinPrice, setAbsoluteMinPrice] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const totalCountRef = useRef(totalCount)
+  const [loaded, setLoaded] = useState(false)
   const pageSize = 3
-  const offset = (pageNumber-1) * pageSize
+  const [offset, setOffset] = useState(0)
+  const offsetRef = useRef(offset)
+
 
   async function onPriceRangeChange(evt) {
     const maxPrice = Number(evt.target.value)
     setSelectedMaxPrice(maxPrice)
   }
+
   useEffect(() => {
     let filterMaxPrice = selectedMaxPrice
     let filterMinPrice = absoluteMinPrice
+
     async function fetchData() {
       if (selectedMaxPrice === -1) {
         const {priceMetrics} = await videoGameStore.getVideoGameStatistics({
@@ -48,12 +48,9 @@ function ListVideoGamesPage() {
         offset: offset,
         maxItems: pageSize
       })
-      setVideoGameList(items)
+      setVideoGameList([...videoGameList, ...items])
+      console.log(items, videoGameList)
       setTotalCount(totalCount)
-      const pageCount = Math.ceil(totalCount / pageSize)
-      if ( pageNumber > pageCount) {
-        navigate('/list-video-games')
-      }
       setLoaded(true)
     }
 
@@ -63,81 +60,75 @@ function ListVideoGamesPage() {
 
   const dict = getDictionary("en").videoGamesList;
 
-  function getVideoGameRowClass(game){
-    if(game.price <= pricePercentiles.p10){
+  function getVideoGameRowClass(game) {
+    if (game.price <= pricePercentiles.p10) {
       return "p10"
     }
-    if(game.price >= pricePercentiles.p90){
+    if (game.price >= pricePercentiles.p90) {
       return "p90"
     }
-    if(game.price >= pricePercentiles.p40 && game.price <= pricePercentiles.p60){
+    if (game.price >= pricePercentiles.p40 && game.price <= pricePercentiles.p60) {
       return "median"
     }
     return ""
-
   }
 
+  useEffect(() => {
+    totalCountRef.current = totalCount;
+  }, [totalCount]);
+
+  useEffect(() => {
+    offsetRef.current = offset;
+  }, [offset]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
+      console.log(scrollTop, scrollHeight, clientHeight)
+      if (scrollTop + clientHeight >= scrollHeight) {
+        console.log(offsetRef.current, totalCountRef.current)
+        if (offsetRef.current < totalCountRef.current) {
+          setOffset(prev => prev + pageSize)
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+
   return (
-    !loaded
-      ? <p>Loading...</p>
-      : <div className="table-container">
-        <table>
-          <thead>
-          <tr>
-            <th>Image</th>
-
-            <th>{dict.headers.name}</th>
-            <th>{dict.headers.genre}</th>
-            <th>{dict.headers.releaseDate}</th>
-            <th>{dict.headers.price}</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          {videoGameList.length === 0 ? (
-            <tr>
-              <td colSpan="5" style={{textAlign: "center", padding: "20px"}}>{dict.messages.noResult}</td>
-            </tr>
-          ) : (
-            videoGameList.map((game, index) => (
-              <tr className={getVideoGameRowClass(game)} key={index}>
-                <td>
-                  <img src="/images/coming-soon.jpeg" alt={game.name} className="game-image"/>
-                </td>
-                <td>{game.name}</td>
-                <td>{game.genre}</td>
-                <td>{game.releaseDate}</td>
-                <td>${game.price?.toFixed(2)}</td>
-                <td>
-                  <Link to={`/update-video-game/${game.id}`}><Edit size={18}/></Link>
-                  <Link to={`/delete-video-game/${game.id}`}><Trash size={18}/></Link>
-                </td>
-              </tr>
-            ))
-          )}
-          </tbody>
-        </table>
-
-        <div className="filter-container">
-          <label htmlFor="priceRange">
-            <span>{dict.filters.maxPrice}</span>: <strong>${selectedMaxPrice}</strong>
-          </label>
-          <input
-            type="range"
-            id="priceRange"
-            min={absoluteMinPrice}
-            max={absoluteMaxPrice}
-            step="1"
-            value={selectedMaxPrice}
-            onChange={onPriceRangeChange}
-          />
-        </div>
-      <Pagination baseUri="/list-video-games" currentPage={pageNumber} maxPageButtonsCount={10} pageSize={pageSize} totalCount={totalCount}/>
+    <>
+      {!loaded
+        ? <p>Loading...</p>
+        : (
+          <>
+            <div className="card-grid">
+              {videoGameList.length === 0 ? (
+                <div className="no-results">{dict.messages.noResult}</div>
+              ) : (
+                videoGameList.map((game, index) => (
+                  <VideoGameCard key={index} game={game} priceClass={getVideoGameRowClass(game)}/>))
+              )}
+            </div>
+            <div className="filter-container">
+              <label htmlFor="priceRange">
+                <span>{dict.filters.maxPrice}</span>: <strong>${selectedMaxPrice}</strong>
+              </label>
+              <input type="range" id="priceRange" min={absoluteMinPrice} max={absoluteMaxPrice}
+                     step="1" value={selectedMaxPrice} onChange={onPriceRangeChange}
+              />
+            </div>
+          </>
+        )
+      }
+    </>
 
 
-      </div>
   );
 
 }
 
 export default ListVideoGamesPage;
+
