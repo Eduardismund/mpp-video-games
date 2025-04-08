@@ -1,60 +1,52 @@
-import {faker} from "@faker-js/faker";
-import {getGenreList} from "../GenreStore.js";
-import {writeFile} from "node:fs";
+import {readFile, writeFile} from "node:fs/promises";
+import genreListJson from "../genre.json" with {type: "json"};
+import {generateSingularVideoGame} from "./data-generator-fn.js";
 
 /**
  *
  * @param {Object} params
  * @param {number} params.count
+ * @param {string} params.filename
  * @return Promise<VideoGame[]>
  */
 async function generateData(params) {
-  const genres = await getGenreList()
-  const generatedData =  Array.from({length: params.count}, () =>
-    generateSingularVideoGame({genres})
+  const genres = genreListJson
+  const fileData = await loadFileContent(params.filename)
+  const uniqueNames = new Set(fileData.map(videoGame => videoGame.name))
+  const generatedData = Array.from({length: params.count}, () =>
+    generateSingularVideoGame({genres, uniqueNames})
   );
 
-  const jsonData = JSON.stringify(generatedData, null, 2);
+  const jsonData = JSON.stringify([...fileData, ...generatedData], null, 2);
 
-  writeFile('data.json', jsonData, (err) => {
+  await writeFile(params.filename, jsonData, (err) => {
     if (err) {
       console.error('Error writing to file:', err);
     } else {
-      console.log('Data successfully written to data.json');
+      console.log(`Data successfully written to ${params.filename}`);
     }
   });
 }
 
-/**
- *
- * @param genres
- * @returns {VideoGame}
- */
-function generateSingularVideoGame({ genres }) {
-  const uniqueNames = new Set();
-  let name;
-
-  do {
-    name = faker.commerce.productName();
-  } while (uniqueNames.has(name));
-
-  uniqueNames.add(name);
-
-  return {
-    name: name,
-    genre: faker.helpers.arrayElement(genres),
-    releaseDate: faker.date.past(20).toISOString().substring(0, 10),
-    price: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
-  };
+async function loadFileContent(path){
+  try {
+    return JSON.parse(await readFile(path, "utf-8"));
+  } catch (error) {
+    console.error("Error reading file:", error);
+    return []
+  }
 }
 
 const args = process.argv.slice(2);
+const filename = args[1]
 const count = args[0] ? parseInt(args[0], 10) : 10;
 
-const params = { count };
+const params = {count, filename};
 
-generateData(params).then(() => {
+try {
   console.log('Data generation complete!');
-}).catch(err => {
-  console.error('Error generating data:', err);
-});
+
+  await generateData(params)
+}catch (e){
+  console.error(e.message)
+}
