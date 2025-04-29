@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet id="1" author="eduardismund">
+    <createTable tableName="video_game">
+      <column name="id" type="varchar(255)">
+        <constraints primaryKey="true" primaryKeyName="video_game_pk"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="genre" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="price" type="decimal(10,2)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="release_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name_hashed" type="BIGINT">
+        <constraints nullable="false" unique="true" uniqueConstraintName="video_game_name_hashed_uk"/>
+      </column>
+      <column name="image" type="varchar(255)"/>
+    </createTable>
+
+    <createTable tableName="video_game_review">
+      <column name="id" type="VARCHAR(255)">
+        <constraints primaryKey="true" primaryKeyName="video_game_review_pk"/>
+      </column>
+      <column name="text" type="VARCHAR(400)"/>
+      <column name="score" type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="timestamp" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="video_game_id" type="varchar(255)">
+        <constraints nullable="false"  foreignKeyName="video_game_review_fk" referencedTableName="video_game" referencedColumnNames="id"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="video_game_name_hashed_ix" tableName="video_game" unique="true">
+      <column name="name_hashed" />
+    </createIndex>
+
+    <createIndex indexName="video_game_price_ix" tableName="video_game">
+      <column name="price"/>
+    </createIndex>
+
+    <createIndex indexName="video_game_genre_ix" tableName="video_game">
+      <column name="genre"/>
+    </createIndex>
+
+    <createIndex indexName="video_game_release_date_ix" tableName="video_game">
+      <column name="release_date"/>
+    </createIndex>
+
+    <createIndex indexName="video_game_review_video_game_id_ix" tableName="video_game_review">
+      <column name="video_game_id"/>
+    </createIndex>
+
+    <createIndex indexName="video_game_review_score_ix" tableName="video_game_review">
+      <column name="score"/>
+    </createIndex>
+
+    <createIndex indexName="video_game_review_timestamp_ix" tableName="video_game_review">
+      <column name="timestamp"/>
+    </createIndex>
+
+    <sql>
+      CREATE INDEX video_game_release_date_year_ix ON video_game (EXTRACT(YEAR FROM release_date));
+    </sql>
+
+  </changeSet>
+
+
+</databaseChangeLog>

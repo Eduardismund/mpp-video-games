@@ -1,0 +1,22 @@
+{
+  "name": "mpp-videogames-backend-js",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Video games store backend for files",
+  "main": "index.js",
+  "keywords": [
+    "videogames",
+    "CRUD"
+  ],
+  "author": "Eduard-David Jitareanu",
+  "license": "ISC",
+  "scripts": {
+    "backend": "node src/backend.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "multer": "^1.4.5-lts.2"
+  }
+}

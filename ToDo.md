@@ -1,19 +1,15 @@
 # To DO:
 
-* Features:
-  * [X] implement validation for update
-  * [X] implement dropdown for genre options
-  * [X] display success and error toasts
-    * when game not found on update screen
-  * [X] navigate to update and delete from list video games
-
-* Styles:
-  * [ ] make elements fit the screen
-  * [ ] general uniform aesthetic
-    * input textboxes
-    * buttons
-    * page layout
-
+## Feature:
+* [X] sorting video games increasing/decreasing price etc. - 1
+* [X] finish CRUD operations on video games/reviews including filtering and sorting - 1
+* [ ] validation on dto's with annotations - 2
+* [ ] handle exceptions mapping them to API responses - 2
+* [X] setup db schema with Liquibase instead of Hibernate - 3
+* [X] statistics API - 1
+* [X] SSE subscriptions endpoint - 2
+* [X] genres endpoint - 1
+* [X] subscriptions feature toggle - 2
 
 ## Bugfix:
 
