@@ -1,0 +1,10 @@
+package ro.eduardismund.domain;
+
+public enum ActionTrailType {
+  CREATE_VIDEO_GAME,
+  CREATE_VIDEO_GAME_REVIEW,
+  UPDATE_VIDEO_GAME,
+  UPDATE_VIDEO_GAME_REVIEW,
+  DELETE_VIDEO_GAME,
+  DELETE_VIDEO_GAME_REVIEW,
+}

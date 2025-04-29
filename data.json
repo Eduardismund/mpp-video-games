@@ -1,0 +1,242 @@
+[
+  {
+    "name": "Gorgeous Bronze Pizza",
+    "genre": "Action RPG",
+    "releaseDate": "2011-12-03",
+    "price": 6.46
+  },
+  {
+    "name": "Awesome Wooden Car",
+    "genre": "Sandbox",
+    "releaseDate": "2007-05-26",
+    "price": 97.32
+  },
+  {
+    "name": "Handcrafted Concrete Mouse",
+    "genre": "RPG",
+    "releaseDate": "2016-04-30",
+    "price": 98.12
+  },
+  {
+    "name": "Elegant Steel Gloves",
+    "genre": "First-Person Shooter",
+    "releaseDate": "2024-02-03",
+    "price": 22.56
+  },
+  {
+    "name": "Handmade Bronze Cheese",
+    "genre": "Sandbox",
+    "releaseDate": "2022-12-24",
+    "price": 99.77
+  },
+  {
+    "name": "Licensed Cotton Cheese",
+    "genre": "RPG",
+    "releaseDate": "2007-05-25",
+    "price": 14.98
+  },
+  {
+    "name": "Handcrafted Fresh Bike",
+    "genre": "Survival / Multiplayer",
+    "releaseDate": "2010-09-09",
+    "price": 36.11
+  },
+  {
+    "name": "Small Fresh Mouse",
+    "genre": "Action RPG",
+    "releaseDate": "2018-01-23",
+    "price": 39.35
+  },
+  {
+    "name": "Small Rubber Sausages",
+    "genre": "Action-Adventure",
+    "releaseDate": "2020-08-31",
+    "price": 30.39
+  },
+  {
+    "name": "Licensed Fresh Bike",
+    "genre": "First-Person Shooter",
+    "releaseDate": "2017-11-20",
+    "price": 30.57
+  },
+  {
+    "name": "Tasty Wooden Bacon",
+    "genre": "Sandbox",
+    "releaseDate": "2013-07-16",
+    "price": 99.33
+  },
+  {
+    "name": "Practical Frozen Shirt",
+    "genre": "First-Person Shooter",
+    "releaseDate": "2021-03-14",
+    "price": 43.42
+  },
+  {
+    "name": "Generic Wooden Gloves",
+    "genre": "RPG",
+    "releaseDate": "2023-09-03",
+    "price": 49.12
+  },
+  {
+    "name": "Refined Metal Fish",
+    "genre": "Horror",
+    "releaseDate": "2013-01-14",
+    "price": 39.97
+  },
+  {
+    "name": "Ergonomic Plastic Keyboard",
+    "genre": "Action-Adventure",
+    "releaseDate": "2015-11-02",
+    "price": 62.21
+  },
+  {
+    "name": "Refined Fresh Mouse",
+    "genre": "Action RPG",
+    "releaseDate": "2017-08-19",
+    "price": 83.79
+  },
+  {
+    "name": "Small Fresh Car",
+    "genre": "Sandbox",
+    "releaseDate": "2011-01-27",
+    "price": 73.23
+  },
+  {
+    "name": "Practical Wooden Mouse",
+    "genre": "RPG",
+    "releaseDate": "2016-04-04",
+    "price": 18.25
+  },
+  {
+    "name": "Ergonomic Fresh Ball",
+    "genre": "Battle Royale",
+    "releaseDate": "2010-08-07",
+    "price": 10.26
+  },
+  {
+    "name": "Unbranded Metal Cheese",
+    "genre": "Action RPG",
+    "releaseDate": "2011-12-07",
+    "price": 31.6
+  },
+  {
+    "name": "Recycled Cotton Cheese",
+    "genre": "Action-Adventure",
+    "releaseDate": "2011-09-24",
+    "price": 50.36
+  },
+  {
+    "name": "Handmade Metal Cheese",
+    "genre": "Survival / Multiplayer",
+    "releaseDate": "2005-07-09",
+    "price": 54.99
+  },
+  {
+    "name": "Electronic Bronze Mouse",
+    "genre": "Action RPG",
+    "releaseDate": "2009-11-20",
+    "price": 59.61
+  },
+  {
+    "name": "Practical Frozen Sausages",
+    "genre": "Horror",
+    "releaseDate": "2018-10-30",
+    "price": 64.97
+  },
+  {
+    "name": "Incredible Bronze Chips",
+    "genre": "Action RPG",
+    "releaseDate": "2018-08-08",
+    "price": 62.49
+  },
+  {
+    "name": "Elegant Fresh Bacon",
+    "genre": "Sandbox",
+    "releaseDate": "2017-10-18",
+    "price": 57.39
+  },
+  {
+    "name": "Rustic Rubber Soap",
+    "genre": "Sandbox",
+    "releaseDate": "2018-05-20",
+    "price": 46.53
+  },
+  {
+    "name": "Generic Rubber Soap",
+    "genre": "Battle Royale",
+    "releaseDate": "2013-07-14",
+    "price": 81.07
+  },
+  {
+    "name": "Elegant Rubber Gloves",
+    "genre": "Action-Adventure",
+    "releaseDate": "2017-09-09",
+    "price": 18.94
+  },
+  {
+    "name": "Recycled Concrete Table",
+    "genre": "Horror",
+    "releaseDate": "2023-07-08",
+    "price": 31.26
+  },
+  {
+    "name": "Fantastic Granite Chicken",
+    "genre": "Battle Royale",
+    "releaseDate": "2023-11-02",
+    "price": 25.73
+  },
+  {
+    "name": "Ergonomic Frozen Pants",
+    "genre": "Survival / Multiplayer",
+    "releaseDate": "2014-02-18",
+    "price": 48.71
+  },
+  {
+    "name": "Handcrafted Wooden Shirt",
+    "genre": "Horror",
+    "releaseDate": "2019-11-16",
+    "price": 3.93
+  },
+  {
+    "name": "Practical Fresh Bike",
+    "genre": "Action RPG",
+    "releaseDate": "2013-08-23",
+    "price": 38.36
+  },
+  {
+    "name": "Practical Metal Fish",
+    "genre": "Sandbox",
+    "releaseDate": "2013-09-29",
+    "price": 22.92
+  },
+  {
+    "name": "Incredible Concrete Computer",
+    "genre": "Battle Royale",
+    "releaseDate": "2006-08-12",
+    "price": 12.45
+  },
+  {
+    "name": "Handcrafted Wooden Fish",
+    "genre": "Action RPG",
+    "releaseDate": "2018-05-06",
+    "price": 91.76
+  },
+  {
+    "name": "Sleek Steel Bacon",
+    "genre": "Action-Adventure",
+    "releaseDate": "2022-02-24",
+    "price": 39.67
+  },
+  {
+    "name": "Bespoke Fresh Pizza",
+    "genre": "Action RPG",
+    "releaseDate": "2005-05-11",
+    "price": 66
+  },
+  {
+    "name": "Rustic Frozen Chicken",
+    "genre": "Sandbox",
+    "releaseDate": "2011-02-03",
+    "price": 34.64
+  }
+]
