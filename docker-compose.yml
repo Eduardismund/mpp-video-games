@@ -1,34 +1,126 @@
 name: mpp-vg
 
 services:
+  frontend:
+    image: ${REGISTRY_URI}mpp-videogames-frontend:${TAG:-latest}
+    build:
+      context: frontend
+      dockerfile: frontend.Dockerfile
+    environment:
+      BACKEND_URL: 'http://backend.mpp-vg.internal:8080'
+      BACKEND_JS_URL: 'http://backendjs.mpp-vg.internal:5000'
+    ports:
+      - target: 80
+    depends_on:
+      - backend
+      - backendjs
+    x-network:
+      AssignPublicIp: true
+      x-cloudmap: PrivateNamespace
+      Ingress:
+        ExtSources:
+          - IPv4: 0.0.0.0/0
+            Name: ANY
+  backend:
+    image: ${REGISTRY_URI}mpp-videogames-backend:${TAG:-latest}
+    build:
+      context: backend
+      dockerfile: backend.Dockerfile
+    ports:
+      - target: 8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db.mpp-vg.internal:5432/mydatabase
+    depends_on:
+      - db
+    networks:
+      default:
+        aliases:
+          - backend.mpp-vg.internal
+    x-network:
+      x-cloudmap: PrivateNamespace
+      Ingress:
+        Myself: true
+        Services:
+          - Name: frontend
+  backendjs:
+    image: ${REGISTRY_URI}mpp-videogames-backend-js:${TAG:-latest}
+    build:
+      context: backend-js
+      dockerfile: backend-js.Dockerfile
+    ports:
+      - target: 5000
+    volumes:
+      - uploads:/backend-js/uploads
+    networks:
+      default:
+        aliases:
+          - backendjs.mpp-vg.internal
+    x-network:
+      x-cloudmap: PrivateNamespace
+      Ingress:
+        Myself: true
+        Services:
+          - Name: frontend
   db:
     image: postgres:15
     environment:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydatabase
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-  k6:
-    image: grafana/k6
-    environment:
-      BASE_URL: http://video-games:8080
-    volumes:
-      - target: /scripts
-        source: ./perftests/dist
-        type: bind
-        read_only: true
-      - target: /data
-        source: ./perftests/data
-        type: bind
-        read_only: true
-    command: 'run -e TEST_FUNCTION=generateData /scripts/index-test.js'
-    extra_hosts:
-      - video-games:10.220.26.152
-
+    ports:
+      - target: 5432
+    networks:
+      default:
+        aliases:
+          - db.mpp-vg.internal
+    x-network:
+      x-cloudmap: PrivateNamespace
+      Ingress:
+        Myself: true
+        Services:
+          - Name: backend
 
 volumes:
   pgdata: {}
+  uploads: {}
 
+x-cloudmap:
+  PrivateNamespace:
+    Name: mpp-vg.internal
+
+x-elbv2:
+  public-alb:
+    Properties:
+      Scheme: internet-facing
+      Type: application
+    MacroParameters:
+      Ingress:
+        ExtSources:
+          - IPv4: 0.0.0.0/0
+            Name: ANY
+            Description: "ANY"
+    Listeners:
+      - Port: 80
+        Protocol: HTTP
+        Targets:
+          - name: frontend:frontend
+            access: /
+          - name: backendjs:backendjs
+            access: /api/files
+          - name: backend:backend
+            access: /api
+    Services:
+      frontend:frontend:
+        port: 80
+        protocol: HTTP
+        healthcheck: 80:HTTP:/index.html
+      backend:backend:
+        port: 8080
+        protocol: HTTP
+        healthcheck: 8080:HTTP:/api/genres
+      backendjs:backendjs:
+        port: 5000
+        protocol: HTTP
+        healthcheck: 5000:HTTP:/health:200

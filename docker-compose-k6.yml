@@ -1,0 +1,19 @@
+name: mpp-vg-k6
+
+services:
+  k6:
+    image: grafana/k6
+    environment:
+      BASE_URL: http://video-games:8080
+    volumes:
+      - target: /scripts
+        source: ./perftests/dist
+        type: bind
+        read_only: true
+      - target: /data
+        source: ./perftests/data
+        type: bind
+        read_only: true
+    command: 'run -e TEST_FUNCTION=generateData /scripts/index-test.js'
+    extra_hosts:
+      - video-games:10.220.26.152

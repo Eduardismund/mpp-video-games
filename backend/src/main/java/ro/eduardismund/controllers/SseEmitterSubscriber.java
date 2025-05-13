@@ -12,7 +12,7 @@ public class SseEmitterSubscriber implements VideoGameSubscriber {
   private final SseEmitter emitter;
 
   @Override
-  public void onAction(ActionType action, Object payload) {
+  public void onAction(ActionType action, Object payload) throws VideoGameSubscriberObsoleteException{
     try {
       SseEmitter.SseEventBuilder event = SseEmitter.event()
         .id(UUID.randomUUID().toString())
@@ -21,6 +21,7 @@ public class SseEmitterSubscriber implements VideoGameSubscriber {
       emitter.send(event);
     } catch (IOException e) {
       emitter.completeWithError(e);
+      throw new VideoGameSubscriberObsoleteException(e.getMessage(), e);
     }
   }
 }
