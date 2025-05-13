@@ -1,7 +1,7 @@
 import SidePanel from "./SidePanel.jsx";
 import HomePage from "./HomePage.jsx";
 import Header from "./Header.jsx";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {HashRouter as Router, Route, Routes} from "react-router-dom";
 import AddVideoGamePage from "./AddVideoGamePage.jsx";
 import ListVideoGamesPage from "./ListVideoGamesPage.jsx";
 import UpdateVideoGamePage from "./UpdateVideoGamePage.jsx";
@@ -19,7 +19,7 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
+      <Router>
         <Header/>
         <SidePanel/>
         <div className="charts">
@@ -44,7 +44,7 @@ function App() {
             </ToastProvider>
           </div>
         </div>
-      </BrowserRouter>
+      </Router>
     </>
   )
 }

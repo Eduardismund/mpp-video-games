@@ -2,6 +2,7 @@ package ro.eduardismund.controllers;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class VideoGameSubscribersManager {
 
   private final Map<String, VideoGameSubscriber> subscribers = new ConcurrentHashMap<>();
@@ -21,7 +23,14 @@ public class VideoGameSubscribersManager {
     final var scheduler = Executors.newSingleThreadScheduledExecutor();
     scheduler.scheduleAtFixedRate(() -> {
       if (enabled) {
-        subscribers.values().forEach(sub -> sub.onAction(ActionType.PING, Map.of("datetime", Instant.now().toString())));
+        subscribers.forEach((key, subscriber) -> {
+          try {
+            subscriber.onAction(ActionType.PING, Map.of("datetime", Instant.now().toString()));
+          } catch (VideoGameSubscriberObsoleteException e) {
+            log.warn(e.getMessage(), e);
+            subscribers.remove(key);
+          }
+        });
       }
     }, 0, 1, TimeUnit.SECONDS);
   }
@@ -36,8 +45,13 @@ public class VideoGameSubscribersManager {
   }
 
   public void notifySubscribers(ActionType action, Object payload) {
-    for (VideoGameSubscriber subscriber : subscribers.values()) {
-      subscriber.onAction(action, payload);
+    for (var subscriber : subscribers.entrySet()) {
+      try {
+        subscriber.getValue().onAction(action, payload);
+      } catch (VideoGameSubscriberObsoleteException e) {
+        log.warn(e.getMessage(), e);
+        subscribers.remove(subscriber.getKey());
+      }
     }
   }
 }

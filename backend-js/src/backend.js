@@ -33,6 +33,12 @@ app.get('/api/files/:filename', (req, res) => {
     res.download(filePath)
 });
 
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        up: true
+    });
+});
+
 
 // Middleware
 app.use(express.json());
