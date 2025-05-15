@@ -5,7 +5,8 @@ import ro.eduardismund.controllers.*;
 
 @Import({VideoGamesController.class, VideoGameReviewsController.class, VideoGamesStatisticsController.class,
   VideoGamesSubscriptionsController.class, GenresController.class, VideoGameSubscribersManager.class,
-  FeaturesToggleController.class, LoginController.class, AuthorizationManager.class, ActionTrailManager.class, UserMonitorController.class, AuthorizationErrorHandlers.class})
+  FeaturesToggleController.class, LoginController.class, AuthorizationManager.class, ActionTrailManager.class,
+  UserMonitorController.class, AuthorizationErrorHandlers.class, ActiveUserSessionsController.class})
 public class ControllersConfig {
 
 }

@@ -71,6 +71,7 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - target: 5432
+        published: 5432
     networks:
       default:
         aliases:

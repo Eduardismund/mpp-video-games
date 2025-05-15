@@ -2,19 +2,21 @@ package ro.eduardismund.controllers;
 
 import lombok.RequiredArgsConstructor;
 import ro.eduardismund.domain.TokenRepository;
+import ro.eduardismund.domain.TokenStatus;
 import ro.eduardismund.domain.User;
 import ro.eduardismund.domain.UserRole;
 
 @RequiredArgsConstructor
 public class AuthorizationManager {
   private final TokenRepository tokenRepository;
+
   public User resolveUser(String tokenString) throws LoginRequiredException, UnauthorizedUserException {
-    if(tokenString == null){
+    if (tokenString == null) {
       throw new LoginRequiredException();
     }
 
-    var token = tokenRepository.findByToken(tokenString);
-    if(token.isEmpty()){
+    var token = tokenRepository.findByToken(tokenString).filter(t -> t.getStatus() == TokenStatus.ACTIVE);
+    if (token.isEmpty()) {
       throw new UnauthorizedUserException();
     }
 
@@ -23,13 +25,14 @@ public class AuthorizationManager {
 
   public void requireUser(String token, String userId) throws LoginRequiredException, UnauthorizedUserException {
     final var user = resolveUser(token);
-    if(!user.getId().equals(userId) ||  user.getRole() != UserRole.USER_ROLE){
+    if (!user.getId().equals(userId) || user.getRole() != UserRole.USER_ROLE) {
       throw new UnauthorizedUserException();
     }
   }
+
   public void requireAdmin(String token) throws LoginRequiredException, UnauthorizedUserException {
     final var user = resolveUser(token);
-    if(user.getRole() != UserRole.ADMIN_ROLE){
+    if (user.getRole() != UserRole.ADMIN_ROLE) {
       throw new UnauthorizedUserException();
     }
   }

@@ -1,21 +1,13 @@
 # To DO:
 
 ## Feature:
-* [X] user monitor list(frontend) details. - 1
-* [X] include username in videoGames and reviews item details and display on frontend - 1
-* [X] prevent admin from creating/ updating backend  - 1
-* [ ] in login response include role and store in frontend and display/hide ui components according to role - 2
-* [ ] README - 9
-*
-* [X] sorting video games increasing/decreasing price etc. - 1
-* [X] finish CRUD operations on video games/reviews including filtering and sorting - 1
-* [X] validation on dto's with annotations - 2
-* [X] handle exceptions mapping them to API responses - 2
-* [X] setup db schema with Liquibase instead of Hibernate - 3
-* [X] statistics API - 1
-* [X] SSE subscriptions endpoint - 2
-* [X] genres endpoint - 1
-* [X] subscriptions feature toggle - 2
+* [x] Login including 2FA and 2FA setup with TOTP
+* [x] manage user sessions from admin profile
+  *  [x] cancel active token
+* [x] tokens expiration
+* [ ] Liquibase change set for adding columns and initizalize non-null columns
+* [ ] Active user session page in menu
+* [ ] Https
 
 ## Bugfix:
 

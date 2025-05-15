@@ -13,6 +13,7 @@ import VideoGameStatisticsChart from "./VideoGameStatisticsChart.jsx";
 import React from "react";
 import LoginPage from "./LoginPage.jsx";
 import UserMonitorPage from "./UserMonitorPage.jsx";
+import ActiveUserSessionsPage from "./ActiveUserSessionsPage.jsx";
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
                 <Route path="/" element={<HomePage/>}/>
                 <Route path="/login" element={<LoginPage/>}/>
                 <Route path="/monitor-users" element={<UserMonitorPage/>}/>
+                <Route path="/active-user-sessions" element={<ActiveUserSessionsPage/>}/>
                 <Route path="/home" element={<HomePage/>}/>
                 <Route path="/add-video-game" element={<AddVideoGamePage/>}/>
                 <Route path="/update-video-game" element={<SearchVideoGameForUpdatePage/>}/>
