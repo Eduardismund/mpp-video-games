@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -23,4 +24,11 @@ public class Token {
   private User user;
   @Column(nullable = false)
   private String token;
+  @Column(nullable = false)
+  private TokenStatus status;
+  private String mfaSecret;
+  private Instant activateBefore;
+  @Column(nullable = false)
+  private Instant validBefore;
+
 }

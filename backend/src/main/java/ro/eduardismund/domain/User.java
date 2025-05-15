@@ -26,4 +26,7 @@ public class User {
   private String password;
   @Column(nullable = false)
   private UserRole role;
+  @Column(nullable = false)
+  private MfaStatus mfaStatus;
+  private String mfaSecret;
 }
