@@ -5,8 +5,8 @@
 * [x] manage user sessions from admin profile
   *  [x] cancel active token
 * [x] tokens expiration
-* [ ] Liquibase change set for adding columns and initizalize non-null columns
-* [ ] Active user session page in menu
+* [ ] Liquibase change set for adding columns and initialize non-null columns
+* [X] Active user session page in menu
 * [ ] Https
 
 ## Bugfix:

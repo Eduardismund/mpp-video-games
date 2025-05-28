@@ -246,5 +246,195 @@
    </createIndex>
   </changeSet>
 
+  <changeSet id="11" author="eduardismund">
+    <!--    MfaStatus Lookup table-->
+    <createTable tableName="user_mfa_status">
+      <column name="id" type="int">
+        <constraints primaryKey="true" primaryKeyName="user_mfa_status_pk"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <insert tableName="user_mfa_status">
+      <column name="id" value="0"/>
+      <column name="name" value="SETUP_REQUIRED"/>
+    </insert>
+    <insert tableName="user_mfa_status">
+      <column name="id" value="1"/>
+      <column name="name" value="NOT_REQUIRED"/>
+    </insert>
+    <insert tableName="user_mfa_status">
+      <column name="id" value="2"/>
+      <column name="name" value="ACTIVE"/>
+    </insert>
+
+    <!--TokenStatus Lookup table-->
+    <createTable tableName="token_status">
+      <column name="id" type="int">
+        <constraints primaryKey="true" primaryKeyName="token_status_pk"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <insert tableName="token_status">
+      <column name="id" value="0"/>
+      <column name="name" value="ACTIVE"/>
+    </insert>
+    <insert tableName="token_status">
+      <column name="id" value="1"/>
+      <column name="name" value="PENDING_ACTIVATION"/>
+    </insert>
+    <insert tableName="token_status">
+      <column name="id" value="2"/>
+      <column name="name" value="PENDING_ACTIVATION_MFA_SETUP"/>
+    </insert>
+    <insert tableName="token_status">
+      <column name="id" value="3"/>
+      <column name="name" value="EXPIRED"/>
+    </insert>
+    <insert tableName="token_status">
+      <column name="id" value="4"/>
+      <column name="name" value="CANCELLED"/>
+    </insert>
+
+    <!--ActionTrailType Lookup table-->
+    <createTable tableName="action_trail_type">
+      <column name="id" type="int">
+        <constraints primaryKey="true" primaryKeyName="action_trail_type_pk"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <insert tableName="action_trail_type">
+      <column name="id" value="0"/>
+      <column name="name" value="CREATE_VIDEO_GAME"/>
+    </insert>
+    <insert tableName="action_trail_type">
+      <column name="id" value="1"/>
+      <column name="name" value="CREATE_VIDEO_GAME_REVIEW"/>
+    </insert>
+    <insert tableName="action_trail_type">
+      <column name="id" value="2"/>
+      <column name="name" value="UPDATE_VIDEO_GAME"/>
+    </insert>
+    <insert tableName="action_trail_type">
+      <column name="id" value="3"/>
+      <column name="name" value="UPDATE_VIDEO_GAME_REVIEW"/>
+    </insert>
+    <insert tableName="action_trail_type">
+      <column name="id" value="4"/>
+      <column name="name" value="DELETE_VIDEO_GAME"/>
+    </insert>
+    <insert tableName="action_trail_type">
+      <column name="id" value="5"/>
+      <column name="name" value="DELETE_VIDEO_GAME_REVIEW"/>
+    </insert>
+
+
+    <!--UserRole Lookup table-->
+    <createTable tableName="user_role">
+      <column name="id" type="int">
+        <constraints primaryKey="true" primaryKeyName="user_role_pk"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <insert tableName="user_role">
+      <column name="id" value="0"/>
+      <column name="name" value="USER_ROLE"/>
+    </insert>
+    <insert tableName="user_role">
+      <column name="id" value="1"/>
+      <column name="name" value="ADMIN_ROLE"/>
+    </insert>
+
+    <delete tableName="token"/>
+    <addColumn tableName="user">
+      <column name="mfa_status" type="int" defaultValue="0">
+        <constraints nullable="false" foreignKeyName="user_user_mfa_status_fk" referencedTableName="user_mfa_status" referencedColumnNames="id"/>
+      </column>
+      <column name="mfa_secret" type="varchar(255)"/>
+    </addColumn>
+    <addColumn tableName="token">
+      <column name="status" type="int">
+        <constraints nullable="false" foreignKeyName="token_token_status_fk" referencedTableName="token_status" referencedColumnNames="id"/>
+      </column>
+      <column name="activate_before" type="timestamp"/>
+      <column name="valid_before" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <createIndex tableName="token" indexName="token_status_ix">
+      <column name="status"/>
+    </createIndex>
+
+    <createIndex tableName="token" indexName="token_valid_before_ix">
+      <column name="status"/>
+    </createIndex>
+
+    <createIndex tableName="token" indexName="token_activate_before_ix">
+      <column name="status"/>
+    </createIndex>
+
+    <addForeignKeyConstraint baseTableName="user" baseColumnNames="role" constraintName="user_user_role_fk" referencedTableName="user_role"
+                             referencedColumnNames="id"/>
+    <addForeignKeyConstraint baseTableName="action_trail_item" baseColumnNames="action" constraintName="action_trail_item_action_trail_type_fk" referencedTableName="action_trail_type"
+                             referencedColumnNames="id"/>
+
+  </changeSet>
+
+  <changeSet id="12" author="eduardismund">
+    <addColumn tableName="token">
+      <column name="mfa_secret" type="varchar(255)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="13" author="eduardismund">
+    <insert tableName="token">
+      <column name="id" value="1"/>
+      <column name="token" value="100"/>
+      <column name="user_id" value="1"/>
+      <column name="status" value="0"/>
+      <column name="activate_before" value="2030-12-12"/>
+      <column name="valid_before" valueDate="2030-12-12"/>
+    </insert>
+    <insert tableName="token">
+      <column name="id" value="2"/>
+      <column name="token" value="101"/>
+      <column name="user_id" value="2"/>
+      <column name="status" value="0"/>
+      <column name="activate_before" value="2030-12-12"/>
+      <column name="valid_before" valueDate="2030-12-12"/>
+    </insert>
+    <insert tableName="token">
+      <column name="id" value="3"/>
+      <column name="token" value="102"/>
+      <column name="user_id" value="3"/>
+      <column name="status" value="0"/>
+      <column name="activate_before" value="2030-12-12"/>
+      <column name="valid_before" valueDate="2030-12-12"/>
+    </insert>
+    <insert tableName="token">
+      <column name="id" value="4"/>
+      <column name="token" value="103"/>
+      <column name="user_id" value="4"/>
+      <column name="status" value="0"/>
+      <column name="activate_before" value="2030-12-12"/>
+      <column name="valid_before" valueDate="2030-12-12"/>
+    </insert>
+    <insert tableName="token">
+      <column name="id" value="5"/>
+      <column name="token" value="104"/>
+      <column name="user_id" value="5"/>
+      <column name="status" value="0"/>
+      <column name="activate_before" value="2030-12-12"/>
+      <column name="valid_before" valueDate="2030-12-12"/>
+    </insert>
+  </changeSet>
 
 </databaseChangeLog>

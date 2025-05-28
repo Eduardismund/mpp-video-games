@@ -34,7 +34,7 @@ function NavMenu({ mode }) {
     if (mode === 'ext') {
       newNavMenuArray = newNavMenuArray.filter(
         (menuItem) =>
-          menuItem.key !== 'home' && menuItem.key !== 'login' && menuItem.key !== 'monitor-users'
+          menuItem.key !== 'home' && menuItem.key !== 'login' && menuItem.key !== 'monitor-users' && menuItem.key !== 'active-user-sessions'
       );
     } else if (!role || role === '1') {
       newNavMenuArray = newNavMenuArray.filter(
@@ -44,7 +44,7 @@ function NavMenu({ mode }) {
           menuItem.key !== 'delete-video-game'
       );
     } else if (role === '0') {
-      newNavMenuArray = newNavMenuArray.filter((menuItem) => menuItem.key !== 'monitor-users');
+      newNavMenuArray = newNavMenuArray.filter((menuItem) => menuItem.key !== 'monitor-users' && menuItem.key !== 'active-user-sessions');
     }
 
     setNavMenuArray(newNavMenuArray);

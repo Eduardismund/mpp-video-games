@@ -1,0 +1,74 @@
+name: mpp-vg
+
+services:
+  frontend:
+    x-network:
+      AssignPublicIp: true
+      x-cloudmap: PrivateNamespace
+      Ingress:
+        ExtSources:
+          - IPv4: 0.0.0.0/0
+            Name: ANY
+  backend:
+    x-network:
+      x-cloudmap: PrivateNamespace
+      Ingress:
+        Myself: true
+        Services:
+          - Name: frontend
+  backendjs:
+    x-network:
+      x-cloudmap: PrivateNamespace
+      Ingress:
+        Myself: true
+        Services:
+          - Name: frontend
+  db:
+    x-network:
+      AssignPublicIp: true
+      x-cloudmap: PrivateNamespace
+      Ingress:
+        Myself: true
+        Services:
+          - Name: backend
+
+x-cloudmap:
+  PrivateNamespace:
+    Name: mpp-vg.internal
+
+x-elbv2:
+  public-alb:
+    Properties:
+      Scheme: internet-facing
+      Type: application
+    MacroParameters:
+      Ingress:
+        ExtSources:
+          - IPv4: 0.0.0.0/0
+            Name: ANY
+            Description: "ANY"
+    Listeners:
+      - Port: 443
+        Protocol: HTTPS
+        Certificates:
+          - CertificateArn: arn:aws:acm:eu-central-1:857360183410:certificate/b2c89896-e9da-4f05-af71-cd54d55183b0
+        Targets:
+          - name: backendjs:backendjs
+            access: /api/files*
+          - name: backend:backend
+            access: /api/*
+          - name: frontend:frontend
+            access: /
+    Services:
+      frontend:frontend:
+        port: 80
+        protocol: HTTP
+        healthcheck: 80:HTTP:/index.html
+      backend:backend:
+        port: 8080
+        protocol: HTTP
+        healthcheck: 8080:HTTP:/api/genres
+      backendjs:backendjs:
+        port: 5000
+        protocol: HTTP
+        healthcheck: 5000:HTTP:/health:200
