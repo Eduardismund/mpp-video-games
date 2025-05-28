@@ -11,6 +11,10 @@ const dictionary = {
           "shortTitle": "Monitor Users",
           "title": "Monitor Users"
         },
+        "active-user-sessions": {
+          "shortTitle": "Active Users",
+          "title": "Active Users"
+        },
         "home": {
           "shortTitle": "Home",
           "title": "Home"

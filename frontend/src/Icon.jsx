@@ -1,5 +1,5 @@
 
-import {Edit, PlusCircle, Trash, List, Home, LogIn, MonitorIcon} from "lucide-react";
+import {Edit, PlusCircle, Trash, List, Home, LogIn, MonitorIcon, User2Icon} from "lucide-react";
 
 function getIcon(key, size) {
   switch (key) {
@@ -17,6 +17,8 @@ function getIcon(key, size) {
       return <LogIn size={size} className="icon" />;
     case "monitor-users":
       return <MonitorIcon size={size} className="icon" />;
+    case "active-user-sessions":
+      return <User2Icon size={size} className="icon" />;
     default:
      return ''
 

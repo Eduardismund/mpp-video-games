@@ -6,21 +6,12 @@ services:
     build:
       context: frontend
       dockerfile: frontend.Dockerfile
-    environment:
-      BACKEND_URL: 'http://backend.mpp-vg.internal:8080'
-      BACKEND_JS_URL: 'http://backendjs.mpp-vg.internal:5000'
     ports:
       - target: 80
-    depends_on:
-      - backend
-      - backendjs
-    x-network:
-      AssignPublicIp: true
-      x-cloudmap: PrivateNamespace
-      Ingress:
-        ExtSources:
-          - IPv4: 0.0.0.0/0
-            Name: ANY
+    networks:
+      default:
+        aliases:
+          - frontend.mpp-vg.internal
   backend:
     image: ${REGISTRY_URI}mpp-videogames-backend:${TAG:-latest}
     build:
@@ -36,12 +27,6 @@ services:
       default:
         aliases:
           - backend.mpp-vg.internal
-    x-network:
-      x-cloudmap: PrivateNamespace
-      Ingress:
-        Myself: true
-        Services:
-          - Name: frontend
   backendjs:
     image: ${REGISTRY_URI}mpp-videogames-backend-js:${TAG:-latest}
     build:
@@ -55,12 +40,6 @@ services:
       default:
         aliases:
           - backendjs.mpp-vg.internal
-    x-network:
-      x-cloudmap: PrivateNamespace
-      Ingress:
-        Myself: true
-        Services:
-          - Name: frontend
   db:
     image: postgres:15
     environment:
@@ -76,52 +55,7 @@ services:
       default:
         aliases:
           - db.mpp-vg.internal
-    x-network:
-      x-cloudmap: PrivateNamespace
-      Ingress:
-        Myself: true
-        Services:
-          - Name: backend
-
 volumes:
   pgdata: {}
   uploads: {}
 
-x-cloudmap:
-  PrivateNamespace:
-    Name: mpp-vg.internal
-
-x-elbv2:
-  public-alb:
-    Properties:
-      Scheme: internet-facing
-      Type: application
-    MacroParameters:
-      Ingress:
-        ExtSources:
-          - IPv4: 0.0.0.0/0
-            Name: ANY
-            Description: "ANY"
-    Listeners:
-      - Port: 80
-        Protocol: HTTP
-        Targets:
-          - name: frontend:frontend
-            access: /
-          - name: backendjs:backendjs
-            access: /api/files
-          - name: backend:backend
-            access: /api
-    Services:
-      frontend:frontend:
-        port: 80
-        protocol: HTTP
-        healthcheck: 80:HTTP:/index.html
-      backend:backend:
-        port: 8080
-        protocol: HTTP
-        healthcheck: 8080:HTTP:/api/genres
-      backendjs:backendjs:
-        port: 5000
-        protocol: HTTP
-        healthcheck: 5000:HTTP:/health:200

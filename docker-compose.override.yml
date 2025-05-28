@@ -1,0 +1,33 @@
+name: mpp-vg
+
+services:
+  rproxy:
+    image: httpd:2.4
+    ports:
+      - target: 443
+        published: 443
+    environment:
+      FRONTEND_URL: 'http://frontend.mpp-vg.internal'
+      BACKEND_URL: 'http://backend.mpp-vg.internal:8080'
+      BACKEND_JS_URL: 'http://backendjs.mpp-vg.internal:5000'
+    volumes:
+      - source: ./reverse-proxy.conf
+        target: /usr/local/apache2/conf/httpd.conf
+        read_only: true
+        type: bind
+      - source: ./cert.pem
+        target: /usr/local/apache2/conf/certs/ssl.crt
+        read_only: true
+        type: bind
+      - source: ./key.pem
+        target: /usr/local/apache2/conf/certs/ssl.key
+        read_only: true
+        type: bind
+    depends_on:
+      - backend
+      - backendjs
+      - frontend
+    networks:
+      default:
+        aliases:
+          - rproxy.mpp-vg.internal

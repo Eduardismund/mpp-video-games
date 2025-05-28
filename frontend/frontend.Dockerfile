@@ -16,5 +16,3 @@ RUN npm run build
 # Stage 2: Build apache-http image containing static resources
 FROM httpd:2.4
 COPY --from=node-builder /frontend/dist /usr/local/apache2/htdocs/
-COPY reverse-proxy.conf /usr/local/apache2/conf/extra/reverse-proxy.conf
-RUN echo "Include conf/extra/reverse-proxy.conf" >> /usr/local/apache2/conf/httpd.conf

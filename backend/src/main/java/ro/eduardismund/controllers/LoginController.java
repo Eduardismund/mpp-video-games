@@ -60,7 +60,7 @@ public class LoginController {
       case SETUP_REQUIRED: {
         token.setMfaSecret(TotpUtil.generateBase32Secret(32));
         token.setStatus(TokenStatus.PENDING_ACTIVATION_MFA_SETUP);
-        token.setActivateBefore(Instant.now().plus(2, ChronoUnit.MINUTES));
+        token.setActivateBefore(Instant.now().plus(1, ChronoUnit.MINUTES));
 
         loginResponse.setNextStep(LoginStep2.SETUP_MFA);
         break;
